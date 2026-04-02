@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SomoShield SOC Dashboard Kit — SomoTechs</title>
+<meta name="description" content="Deploy a full SOC dashboard in 48 hours. Live threat monitoring, automated bans, disk health, backup verification. Self-hosted, no SaaS fees.">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0a0a0f;color:#e2e8f0;font-family:'Segoe UI',system-ui,sans-serif;line-height:1.6}
+  a{color:#38bdf8}
+  .topbar{background:#0f172a;border-bottom:1px solid #1e293b;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+  .brand{font-weight:700;font-size:1.1rem;color:#38bdf8;text-decoration:none}
+  .hero{max-width:820px;margin:0 auto;padding:72px 24px 48px}
+  .badge-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+  .badge{background:#1e293b;border:1px solid #334155;border-radius:20px;padding:5px 14px;font-size:.78rem;color:#94a3b8;font-weight:600}
+  .badge.green{border-color:#166534;color:#4ade80;background:#052e16}
+  .eyebrow{font-size:.8rem;font-weight:700;letter-spacing:.12em;color:#38bdf8;text-transform:uppercase;margin-bottom:14px}
+  h1{font-size:2.5rem;font-weight:800;line-height:1.2;margin-bottom:20px;color:#f1f5f9}
+  .sub{font-size:1.15rem;color:#94a3b8;margin-bottom:36px;max-width:640px}
+  .price-tag{display:inline-block;background:#0f172a;border:2px solid #38bdf8;border-radius:12px;padding:24px 32px;margin-bottom:36px}
+  .price-tag .amount{font-size:3rem;font-weight:800;color:#38bdf8}
+  .price-tag .was{text-decoration:line-through;color:#475569;margin-right:8px;font-size:1.2rem}
+  .price-tag .note{font-size:.85rem;color:#64748b;margin-top:6px}
+  .cta-btn{display:inline-block;background:#38bdf8;color:#0a0a0f;font-weight:800;font-size:1.1rem;padding:18px 40px;border-radius:8px;text-decoration:none}
+  .cta-btn:hover{background:#7dd3fc}
+  .section{max-width:820px;margin:0 auto;padding:0 24px 60px}
+  h2{font-size:1.5rem;font-weight:700;color:#f1f5f9;margin-bottom:24px}
+  .feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:48px}
+  .feat{background:#0f172a;border:1px solid #1e293b;border-radius:10px;padding:22px}
+  .feat-icon{font-size:1.6rem;margin-bottom:10px}
+  .feat h3{font-size:1rem;font-weight:700;color:#f1f5f9;margin-bottom:6px}
+  .feat p{font-size:.9rem;color:#64748b}
+  .stack-table{width:100%;border-collapse:collapse;margin-bottom:48px}
+  .stack-table th{text-align:left;font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:#475569;border-bottom:1px solid #1e293b;padding:10px 0}
+  .stack-table td{padding:14px 0;border-bottom:1px solid #0f172a;vertical-align:top}
+  .stack-table td:first-child{color:#38bdf8;font-weight:600;width:180px}
+  .stack-table td:last-child{color:#94a3b8;font-size:.9rem}
+  .vs{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:48px}
+  .vs-card{background:#0f172a;border:1px solid #1e293b;border-radius:10px;padding:24px}
+  .vs-card.them{border-color:#450a0a}
+  .vs-card.us{border-color:#14532d}
+  .vs-label{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px}
+  .vs-card.them .vs-label{color:#ef4444}
+  .vs-card.us .vs-label{color:#4ade80}
+  .vs-list{list-style:none;display:grid;gap:8px;font-size:.9rem}
+  .vs-list li{display:flex;gap:8px;align-items:flex-start;color:#94a3b8}
+  .faq{display:grid;gap:14px}
+  .faq-item{background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:20px 24px}
+  .faq-item strong{display:block;color:#f1f5f9;margin-bottom:8px}
+  .footer{text-align:center;padding:40px 24px;color:#334155;font-size:.85rem;border-top:1px solid #1e293b}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a class="brand" href="/">SomoTechs</a>
+  <a href="https://somotechs.gumroad.com/l/somoshield-kit" class="cta-btn" style="padding:10px 22px;font-size:.9rem">Get the Kit — $97</a>
+</div>
+
+<div class="hero">
+  <div class="badge-row">
+    <span class="badge green">Self-hosted</span>
+    <span class="badge green">No SaaS fees</span>
+    <span class="badge">Full source code</span>
+    <span class="badge">Deploy guide included</span>
+  </div>
+  <div class="eyebrow">SOC Dashboard Kit · $97 one-time</div>
+  <h1>A Full Security Operations Dashboard — Running in 48 Hours</h1>
+  <p class="sub">Complete source code + deployment guide for the SOC dashboard I use to run 8 client sites. CrowdSec, Wazuh, backups, disk health — all in one place.</p>
+
+  <div class="price-tag">
+    <div><span class="was">$800+/mo</span> other tools charge</div>
+    <div class="amount">$97</div>
+    <div class="note">One-time · Full source code · 48-hr deploy guarantee</div>
+  </div>
+  <br>
+  <a href="https://somotechs.gumroad.com/l/somoshield-kit" class="cta-btn">Get the Kit →</a>
+</div>
+
+<div class="section">
+  <h2>What the dashboard surfaces</h2>
+  <div class="feature-grid">
+    <div class="feat"><div class="feat-icon">🛡</div><h3>Live Threat Dashboard</h3><p>Active bans, recent decisions, attack types, geo map. Real-time view of what's hitting your infrastructure.</p></div>
+    <div class="feat"><div class="feat-icon">🚫</div><h3>Permanent Ban Engine</h3><p>One-click permanent IP bans via CrowdSec LAPI. Decision propagates to every server in your mesh instantly.</p></div>
+    <div class="feat"><div class="feat-icon">💾</div><h3>Disk Health Monitor</h3><p>SMART data for every drive — model, health status, temperature, reallocated sectors, power-on hours. Filesystem usage with color-coded warnings.</p></div>
+    <div class="feat"><div class="feat-icon">📦</div><h3>Backup Verification</h3><p>Restic snapshot status per client. Know your backups are running before the client asks.</p></div>
+    <div class="feat"><div class="feat-icon">🐳</div><h3>Container Health</h3><p>All Docker containers across your stack — status, uptime, resource usage. One view.</p></div>
+    <div class="feat"><div class="feat-icon">🔐</div><h3>Auth + Login</h3><p>Password-protected. Session management. No external auth dependency.</p></div>
+  </div>
+
+  <h2>The stack</h2>
+  <table class="stack-table">
+    <tr><th>Component</th><th>What it does</th><th>Cost</th></tr>
+    <tr><td>Flask + Python</td><td>Dashboard backend, API layer, auth</td><td>Free</td></tr>
+    <tr><td>CrowdSec</td><td>Crowd-sourced IPS, decision engine</td><td>Free</td></tr>
+    <tr><td>Wazuh</td><td>SIEM, log aggregation, alerting</td><td>Free</td></tr>
+    <tr><td>Restic</td><td>Encrypted backup snapshots</td><td>Free</td></tr>
+    <tr><td>Docker</td><td>Container orchestration</td><td>Free</td></tr>
+    <tr><td>smartmontools</td><td>SMART drive health data</td><td>Free</td></tr>
+    <tr><td>Hardware</td><td>Any mini PC or small VPS</td><td>$0 if you have a machine</td></tr>
+  </table>
+
+  <div class="vs">
+    <div class="vs-card them">
+      <div class="vs-label">Managed SOC tools</div>
+      <ul class="vs-list">
+        <li><span>✗</span> $500–$2,000/mo</li>
+        <li><span>✗</span> Your data on their servers</li>
+        <li><span>✗</span> Per-seat licensing</li>
+        <li><span>✗</span> Months to onboard</li>
+        <li><span>✗</span> Can't customize</li>
+      </ul>
+    </div>
+    <div class="vs-card us">
+      <div class="vs-label">SomoShield Kit</div>
+      <ul class="vs-list">
+        <li><span>✓</span> $97 once, own it forever</li>
+        <li><span>✓</span> Self-hosted, your infra</li>
+        <li><span>✓</span> No per-seat, no limits</li>
+        <li><span>✓</span> Live in 48 hours</li>
+        <li><span>✓</span> Full source code to modify</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>What's in the kit</h2>
+  <ul style="list-style:none;display:grid;gap:10px;margin-bottom:48px">
+    <li style="display:flex;gap:12px;align-items:flex-start"><span style="color:#4ade80;font-weight:700">✓</span><span>Full Flask application source code (dashboard, API, auth)</span></li>
+    <li style="display:flex;gap:12px;align-items:flex-start"><span style="color:#4ade80;font-weight:700">✓</span><span>Docker + docker-compose configs, production-ready</span></li>
+    <li style="display:flex;gap:12px;align-items:flex-start"><span style="color:#4ade80;font-weight:700">✓</span><span>Step-by-step deploy guide (Ubuntu 22.04, bare metal or VPS)</span></li>
+    <li style="display:flex;gap:12px;align-items:flex-start"><span style="color:#4ade80;font-weight:700">✓</span><span>CrowdSec LAPI integration guide (single-server and mesh)</span></li>
+    <li style="display:flex;gap:12px;align-items:flex-start"><span style="color:#4ade80;font-weight:700">✓</span><span>Restic backup config templates</span></li>
+    <li style="display:flex;gap:12px;align-items:flex-start"><span style="color:#4ade80;font-weight:700">✓</span><span>Nginx Proxy Manager config for SSL + auth</span></li>
+    <li style="display:flex;gap:12px;align-items:flex-start"><span style="color:#4ade80;font-weight:700">✓</span><span>Email support — direct line to the engineer who built it</span></li>
+  </ul>
+
+  <h2>FAQ</h2>
+  <div class="faq">
+    <div class="faq-item"><strong>Do I need DevOps experience?</strong>Comfortable with Docker and a Linux terminal is enough. Every command is in the guide. Setup takes ~2-4 hours for first-timers.</div>
+    <div class="faq-item"><strong>Can I use this for multiple clients?</strong>Yes. The architecture supports a multi-client mesh. One LAPI, multiple agents. Guide covers this.</div>
+    <div class="faq-item"><strong>Will you help if I get stuck?</strong>Yes. Email tony@somotechs.com. I respond within 24 hours. I'm the one who built it.</div>
+    <div class="faq-item"><strong>Is there a hosted/managed option?</strong>Yes — see the <a href="/products/soc-setup">SOC Setup Service ($497)</a> if you'd rather I just deploy it for you.</div>
+    <div class="faq-item"><strong>Does it require Wazuh?</strong>No. CrowdSec + the dashboard runs standalone. Wazuh integration is optional and documented separately.</div>
+  </div>
+</div>
+
+<div class="section" style="text-align:center;padding-bottom:80px">
+  <h2>Stop flying blind. Own your security stack.</h2>
+  <p style="color:#94a3b8;margin-bottom:28px">$97 once. Full source. No monthly fees. Direct support.</p>
+  <a href="https://somotechs.gumroad.com/l/somoshield-kit" class="cta-btn">Get the Kit — $97 →</a>
+  <p style="color:#475569;font-size:.85rem;margin-top:16px">Secure checkout via Gumroad · Source code + guide delivered instantly</p>
+</div>
+
+<div class="footer">
+  © 2025 SomoTechs · <a href="/">somotechs.github.io</a> · <a href="mailto:tony@somotechs.com">tony@somotechs.com</a>
+</div>
+</body>
+</html>

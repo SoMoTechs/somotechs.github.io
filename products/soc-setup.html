@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOC Stack Setup Service — SomoTechs</title>
+<meta name="description" content="I'll deploy a full self-hosted security stack on your server in 48 hours. CrowdSec, SOC dashboard, backups, monitoring. You own it forever.">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0a0a0f;color:#e2e8f0;font-family:'Segoe UI',system-ui,sans-serif;line-height:1.6}
+  a{color:#38bdf8}
+  .topbar{background:#0f172a;border-bottom:1px solid #1e293b;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+  .brand{font-weight:700;font-size:1.1rem;color:#38bdf8;text-decoration:none}
+  .hero{max-width:760px;margin:0 auto;padding:72px 24px 48px}
+  .eyebrow{font-size:.8rem;font-weight:700;letter-spacing:.12em;color:#f59e0b;text-transform:uppercase;margin-bottom:14px}
+  h1{font-size:2.4rem;font-weight:800;line-height:1.2;margin-bottom:20px;color:#f1f5f9}
+  .sub{font-size:1.15rem;color:#94a3b8;margin-bottom:36px;max-width:600px}
+  .price-tag{display:inline-block;background:#0f172a;border:2px solid #f59e0b;border-radius:12px;padding:24px 32px;margin-bottom:36px}
+  .price-tag .amount{font-size:3rem;font-weight:800;color:#f59e0b}
+  .price-tag .note{font-size:.85rem;color:#64748b;margin-top:6px}
+  .cta-btn{display:inline-block;background:#f59e0b;color:#0a0a0f;font-weight:800;font-size:1.1rem;padding:18px 40px;border-radius:8px;text-decoration:none}
+  .cta-btn:hover{background:#fbbf24}
+  .section{max-width:760px;margin:0 auto;padding:0 24px 60px}
+  h2{font-size:1.45rem;font-weight:700;color:#f1f5f9;margin-bottom:20px}
+  .step-list{list-style:none;display:grid;gap:16px;margin-bottom:48px}
+  .step{background:#0f172a;border:1px solid #1e293b;border-radius:10px;padding:22px;display:flex;gap:20px}
+  .step-num{background:#1e293b;color:#f59e0b;font-weight:800;font-size:1.1rem;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+  .step-body strong{display:block;color:#f1f5f9;margin-bottom:4px}
+  .step-body p{font-size:.9rem;color:#64748b}
+  .includes{list-style:none;display:grid;gap:10px;margin-bottom:48px}
+  .includes li{display:flex;gap:12px;align-items:flex-start}
+  .includes li .check{color:#4ade80;font-weight:700;flex-shrink:0}
+  .guarantee{background:#0f172a;border:1px solid #166534;border-radius:12px;padding:28px;margin-bottom:48px;display:flex;gap:20px;align-items:flex-start}
+  .guarantee-icon{font-size:2rem;flex-shrink:0}
+  .guarantee strong{display:block;color:#4ade80;margin-bottom:6px;font-size:1.05rem}
+  .guarantee p{font-size:.9rem;color:#64748b}
+  .footer{text-align:center;padding:40px 24px;color:#334155;font-size:.85rem;border-top:1px solid #1e293b}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a class="brand" href="/">SomoTechs</a>
+  <a href="https://somotechs.gumroad.com/l/soc-setup" class="cta-btn" style="padding:10px 22px;font-size:.9rem;background:#f59e0b">Book Setup — $497</a>
+</div>
+
+<div class="hero">
+  <div class="eyebrow">Done-for-you service · $497 flat</div>
+  <h1>I'll Deploy Your Full Security Stack in 48 Hours</h1>
+  <p class="sub">You give me server access. I install, configure, and hand you back a running SOC dashboard, CrowdSec IPS, backup monitoring, and disk health tracking. You own it forever.</p>
+
+  <div class="price-tag">
+    <div class="amount">$497</div>
+    <div class="note">Flat fee · 48-hour delivery · You own all code</div>
+  </div>
+  <br>
+  <a href="https://somotechs.gumroad.com/l/soc-setup" class="cta-btn">Book the Setup →</a>
+  <p style="color:#475569;font-size:.85rem;margin-top:16px">Slots limited — running 8 client sites, I take 2 new setups/month</p>
+</div>
+
+<div class="section">
+  <h2>How it works</h2>
+  <ul class="step-list">
+    <li class="step"><div class="step-num">1</div><div class="step-body"><strong>You book + pay</strong><p>Gumroad checkout. I'll email you within 2 hours to collect server details (SSH access, what services you're running).</p></div></li>
+    <li class="step"><div class="step-num">2</div><div class="step-body"><strong>I deploy everything</strong><p>Within 48 hours I have CrowdSec, the SOC dashboard, Restic backup config, and monitoring live on your server. I document everything as I go.</p></div></li>
+    <li class="step"><div class="step-num">3</div><div class="step-body"><strong>Walkthrough call</strong><p>30-min Zoom. I walk you through the dashboard, show you how to add bans, read alerts, and verify backups. You ask questions, I answer them.</p></div></li>
+    <li class="step"><div class="step-num">4</div><div class="step-body"><strong>Handoff + 30-day support</strong><p>Full documentation, all config files, 30 days of email support if anything needs tuning.</p></div></li>
+  </ul>
+
+  <h2>What you get</h2>
+  <ul class="includes">
+    <li><span class="check">✓</span><span>CrowdSec installed, bouncer configured, LAPI running</span></li>
+    <li><span class="check">✓</span><span>SOC Dashboard deployed at your domain (or IP)</span></li>
+    <li><span class="check">✓</span><span>Disk health monitoring (all drives, SMART + filesystem)</span></li>
+    <li><span class="check">✓</span><span>Restic backup verification integrated</span></li>
+    <li><span class="check">✓</span><span>Nginx Proxy Manager with SSL (if applicable)</span></li>
+    <li><span class="check">✓</span><span>Full source code — you own it, no lock-in</span></li>
+    <li><span class="check">✓</span><span>30-min walkthrough call</span></li>
+    <li><span class="check">✓</span><span>30 days email support</span></li>
+    <li><span class="check">✓</span><span>All config documentation in a private doc for your team</span></li>
+  </ul>
+
+  <div class="guarantee">
+    <div class="guarantee-icon">🔒</div>
+    <div>
+      <strong>48-Hour Delivery Guarantee</strong>
+      <p>If I don't have your stack live within 48 hours of receiving server access, I'll refund $100 off the total. I've done this 20+ times — it ships on time.</p>
+    </div>
+  </div>
+
+  <h2>Who this is for</h2>
+  <ul style="list-style:none;display:grid;gap:10px;margin-bottom:48px">
+    <li style="display:flex;gap:12px"><span style="color:#38bdf8">→</span><span>SMB IT managers who know they need security monitoring but don't have time to set it up</span></li>
+    <li style="display:flex;gap:12px"><span style="color:#38bdf8">→</span><span>MSPs tired of paying $500+/mo for tools they could self-host for $0</span></li>
+    <li style="display:flex;gap:12px"><span style="color:#38bdf8">→</span><span>Homelabbers who want production-grade security on their setup</span></li>
+    <li style="display:flex;gap:12px"><span style="color:#38bdf8">→</span><span>Anyone who got hit by a breach or near-miss and wants to fix the gap fast</span></li>
+  </ul>
+</div>
+
+<div class="section" style="text-align:center;padding-bottom:80px">
+  <h2>Ready to stop worrying about what you can't see?</h2>
+  <p style="color:#94a3b8;margin-bottom:28px">$497 flat. 48-hour delivery. You own everything.</p>
+  <a href="https://somotechs.gumroad.com/l/soc-setup" class="cta-btn">Book the Setup — $497 →</a>
+  <p style="color:#475569;font-size:.85rem;margin-top:16px">Questions first? <a href="mailto:tony@somotechs.com">tony@somotechs.com</a></p>
+</div>
+
+<div class="footer">
+  © 2025 SomoTechs · <a href="/">somotechs.github.io</a> · <a href="mailto:tony@somotechs.com">tony@somotechs.com</a>
+</div>
+</body>
+</html>

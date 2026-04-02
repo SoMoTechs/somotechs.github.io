@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CrowdSec SMB Deploy Guide — SomoTechs</title>
+<meta name="description" content="Block 4,000+ attacks/month on your SMB server for $0/mo. Step-by-step CrowdSec deployment guide with bouncer config, LAPI setup, and dashboard integration.">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0a0a0f;color:#e2e8f0;font-family:'Segoe UI',system-ui,sans-serif;line-height:1.6}
+  a{color:#38bdf8}
+  .topbar{background:#0f172a;border-bottom:1px solid #1e293b;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+  .brand{font-weight:700;font-size:1.1rem;color:#38bdf8;text-decoration:none}
+  .hero{max-width:760px;margin:0 auto;padding:72px 24px 48px}
+  .eyebrow{font-size:.8rem;font-weight:700;letter-spacing:.12em;color:#38bdf8;text-transform:uppercase;margin-bottom:14px}
+  h1{font-size:2.4rem;font-weight:800;line-height:1.2;margin-bottom:20px;color:#f1f5f9}
+  .sub{font-size:1.15rem;color:#94a3b8;margin-bottom:36px;max-width:580px}
+  .price-tag{display:inline-block;background:#1e293b;border:1px solid #334155;border-radius:10px;padding:20px 28px;margin-bottom:36px}
+  .price-tag .amount{font-size:2.8rem;font-weight:800;color:#38bdf8}
+  .price-tag .note{font-size:.85rem;color:#64748b;margin-top:4px}
+  .cta-btn{display:inline-block;background:#38bdf8;color:#0a0a0f;font-weight:800;font-size:1.05rem;padding:16px 36px;border-radius:8px;text-decoration:none;letter-spacing:.02em}
+  .cta-btn:hover{background:#7dd3fc}
+  .section{max-width:760px;margin:0 auto;padding:0 24px 56px}
+  h2{font-size:1.45rem;font-weight:700;color:#f1f5f9;margin-bottom:20px}
+  .what-list{list-style:none;display:grid;gap:12px}
+  .what-list li{background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:16px 20px;display:flex;gap:14px}
+  .what-list li .icon{font-size:1.3rem;flex-shrink:0;margin-top:2px}
+  .what-list li .text strong{display:block;color:#f1f5f9;margin-bottom:3px}
+  .proof{background:#0f172a;border:1px solid #1e293b;border-radius:12px;padding:28px;margin-bottom:48px}
+  .proof-stat{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;text-align:center;margin-bottom:24px}
+  .proof-stat .num{font-size:2rem;font-weight:800;color:#38bdf8}
+  .proof-stat .label{font-size:.8rem;color:#64748b;margin-top:4px}
+  .proof-quote{font-style:italic;color:#94a3b8;border-left:3px solid #334155;padding-left:16px;font-size:.95rem}
+  .faq{display:grid;gap:16px}
+  .faq-item{background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:20px 24px}
+  .faq-item strong{display:block;color:#f1f5f9;margin-bottom:8px}
+  .footer{text-align:center;padding:40px 24px;color:#334155;font-size:.85rem;border-top:1px solid #1e293b}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a class="brand" href="/">SomoTechs</a>
+  <a href="https://somotechs.gumroad.com/l/crowdsec-smb" class="cta-btn" style="padding:10px 22px;font-size:.9rem">Get the Guide — $27</a>
+</div>
+
+<div class="hero">
+  <div class="eyebrow">Security Guide · $27 one-time</div>
+  <h1>Block 4,000+ Attacks/Month on Your SMB Server — for Free</h1>
+  <p class="sub">Step-by-step CrowdSec deployment guide. Bouncer config, LAPI mesh setup, dashboard integration. Running in under 2 hours.</p>
+
+  <div class="price-tag">
+    <div class="amount">$27</div>
+    <div class="note">One-time · Instant download · Lifetime updates</div>
+  </div>
+  <br>
+  <a href="https://somotechs.gumroad.com/l/crowdsec-smb" class="cta-btn">Get the Guide →</a>
+</div>
+
+<div class="section">
+  <div class="proof">
+    <div class="proof-stat">
+      <div><div class="num">4,200+</div><div class="label">Attacks blocked/month per site</div></div>
+      <div><div class="num">$0/mo</div><div class="label">Ongoing cost</div></div>
+      <div><div class="num">2 hrs</div><div class="label">Setup time</div></div>
+    </div>
+    <div class="proof-quote">"I was paying $200/mo for a security solution that missed credential stuffing. This stack catches it automatically." — MSP operator, 8 client sites</div>
+  </div>
+
+  <h2>What's inside</h2>
+  <ul class="what-list">
+    <li><div class="icon">🛡</div><div class="text"><strong>Full CrowdSec install walkthrough</strong>Clean install on Ubuntu 22.04/Debian, with all the gotchas documented. Package repo setup, service config, verification steps.</div></li>
+    <li><div class="icon">⚡</div><div class="text"><strong>Bouncer config that actually works</strong>The nftables bouncer setup most guides get wrong. DROP vs REJECT, update frequency, logging — all dialed in.</div></li>
+    <li><div class="icon">🕸</div><div class="text"><strong>LAPI mesh setup</strong>Connect multiple servers to a single decision engine. One attack on any server = all servers block that IP instantly.</div></li>
+    <li><div class="icon">🎯</div><div class="text"><strong>Custom scenarios for SSH, RDP, web panels</strong>Pre-tuned detection rules for the services SMBs actually run. Not the defaults — the ones that catch real attacks.</div></li>
+    <li><div class="icon">📊</div><div class="text"><strong>Monitoring &amp; alerting setup</strong>Get notified when the engine makes decisions. Email alerts, log integration, metric exports.</div></li>
+    <li><div class="icon">🔗</div><div class="text"><strong>Nginx Proxy Manager integration</strong>Route all your web traffic through CrowdSec before it hits your apps. Block at the edge.</div></li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>Frequently asked</h2>
+  <div class="faq">
+    <div class="faq-item"><strong>Do I need to know Linux?</strong>Basic comfort with a terminal. If you can SSH into a server and run apt install, you're ready. Every command is documented.</div>
+    <div class="faq-item"><strong>Does this work on a VPS?</strong>Yes. DigitalOcean, Hetzner, Linode, any VPS with root access. Also works on bare metal and home servers.</div>
+    <div class="faq-item"><strong>What about Windows servers?</strong>This guide covers Linux. A Windows-focused guide is on the roadmap.</div>
+    <div class="faq-item"><strong>Is CrowdSec actually free?</strong>Yes. The community tier is free forever. There's a paid cloud console for teams, but everything in this guide uses the free tier.</div>
+    <div class="faq-item"><strong>What if I get stuck?</strong>Email support included. tony@somotechs.com — I respond within 24 hours.</div>
+  </div>
+</div>
+
+<div class="section" style="text-align:center;padding-bottom:80px">
+  <h2>Ready to stop flying blind?</h2>
+  <p style="color:#94a3b8;margin-bottom:28px">One-time $27. No subscription. Instant access.</p>
+  <a href="https://somotechs.gumroad.com/l/crowdsec-smb" class="cta-btn">Get the Guide — $27 →</a>
+  <p style="color:#475569;font-size:.85rem;margin-top:16px">Secure checkout via Gumroad · PDF + config files delivered instantly</p>
+</div>
+
+<div class="footer">
+  © 2025 SomoTechs · <a href="/">somotechs.github.io</a> · <a href="mailto:tony@somotechs.com">tony@somotechs.com</a>
+</div>
+</body>
+</html>
