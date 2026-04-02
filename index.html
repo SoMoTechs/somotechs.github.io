@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SomoShield — Managed Security for Missouri Businesses</title>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#06091a;
+      --bg2:#0b1026;
+      --card:#111827;
+      --card2:#1a2234;
+      --border:#1e2d47;
+      --border2:#263450;
+      --text:#f0f4ff;
+      --muted:#7a8fad;
+      --dim:#4a5a73;
+      --blue:#4f8ef7;
+      --blue2:#3b73e8;
+      --purple:#8b5cf6;
+      --cyan:#22d3ee;
+      --green:#10b981;
+      --red:#f43f5e;
+      --orange:#fb923c;
+      --yellow:#fbbf24;
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;line-height:1.65}
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar{width:6px}
+    ::-webkit-scrollbar-track{background:var(--bg)}
+    ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+    /* ── NAV ── */
+    nav{
+      position:fixed;top:0;left:0;right:0;z-index:200;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:0 2.5rem;height:64px;
+      background:rgba(6,9,26,.8);
+      backdrop-filter:blur(20px);
+      border-bottom:1px solid var(--border);
+    }
+    .logo{display:flex;align-items:center;gap:.7rem;text-decoration:none}
+    .logo-mark{
+      width:36px;height:36px;border-radius:10px;
+      background:linear-gradient(135deg,var(--blue),var(--purple));
+      display:flex;align-items:center;justify-content:center;
+      font-size:1.1rem;
+    }
+    .logo-text{font-weight:800;font-size:1.1rem;color:var(--text)}
+    .logo-text span{color:var(--cyan)}
+    nav ul{list-style:none;display:flex;align-items:center;gap:2rem}
+    nav a{color:var(--muted);text-decoration:none;font-size:.875rem;transition:color .2s}
+    nav a:hover{color:var(--text)}
+    .nav-demo{
+      background:linear-gradient(135deg,var(--blue),var(--purple));
+      color:#fff!important;padding:.5rem 1.2rem;border-radius:8px;font-weight:700;font-size:.875rem;
+    }
+    .nav-demo:hover{opacity:.9}
+
+    /* ── HERO ── */
+    .hero{
+      min-height:100vh;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;
+      padding:8rem 1.5rem 5rem;text-align:center;
+      position:relative;overflow:hidden;
+    }
+    /* grid overlay */
+    .hero::before{
+      content:'';position:absolute;inset:0;
+      background-image:
+        linear-gradient(rgba(79,142,247,.06) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(79,142,247,.06) 1px,transparent 1px);
+      background-size:50px 50px;
+      mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 40%,transparent 100%);
+    }
+    /* glow orbs */
+    .orb{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;opacity:.35}
+    .orb1{width:600px;height:600px;background:var(--blue);top:-200px;left:-200px;opacity:.12}
+    .orb2{width:500px;height:500px;background:var(--purple);bottom:-100px;right:-150px;opacity:.12}
+    .orb3{width:300px;height:300px;background:var(--cyan);top:30%;left:50%;transform:translateX(-50%);opacity:.08}
+
+    .hero-content{position:relative;z-index:1;max-width:900px}
+    .live-badge{
+      display:inline-flex;align-items:center;gap:.5rem;
+      background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);
+      color:var(--green);border-radius:99px;padding:.3rem 1rem;
+      font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+      margin-bottom:2rem;
+    }
+    .live-dot{
+      width:7px;height:7px;border-radius:50%;background:var(--green);
+      animation:livepulse 1.6s ease-in-out infinite;
+    }
+    @keyframes livepulse{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,.5)}50%{box-shadow:0 0 0 5px rgba(16,185,129,0)}}
+
+    h1{
+      font-size:clamp(2.6rem,5.5vw,4.2rem);font-weight:900;line-height:1.1;
+      letter-spacing:-.02em;margin-bottom:1.5rem;
+    }
+    .h1-plain{color:var(--text)}
+    .h1-grad{
+      background:linear-gradient(135deg,var(--blue) 0%,var(--cyan) 50%,var(--purple) 100%);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    }
+    .hero-sub{
+      font-size:1.15rem;color:var(--muted);max-width:600px;margin:0 auto 2.5rem;
+    }
+    .hero-ctas{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-bottom:4rem}
+    .btn{
+      display:inline-flex;align-items:center;gap:.5rem;
+      padding:.85rem 1.8rem;border-radius:10px;font-weight:700;
+      font-size:.95rem;text-decoration:none;transition:all .2s;
+    }
+    .btn-glow{
+      background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;
+      box-shadow:0 0 30px rgba(79,142,247,.35);
+    }
+    .btn-glow:hover{box-shadow:0 0 45px rgba(79,142,247,.55);transform:translateY(-2px)}
+    .btn-ghost{
+      background:transparent;color:var(--text);
+      border:1px solid var(--border2);
+    }
+    .btn-ghost:hover{background:var(--card);transform:translateY(-2px)}
+
+    /* hero metrics */
+    .hero-metrics{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+      background:var(--border);border:1px solid var(--border);
+      border-radius:16px;overflow:hidden;max-width:780px;margin:0 auto;
+    }
+    .metric{
+      background:var(--card2);padding:1.25rem 1rem;text-align:center;
+    }
+    .metric-val{font-size:1.8rem;font-weight:800;color:var(--blue)}
+    .metric-label{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:.2rem}
+
+    /* ── TRUST BAR ── */
+    .trust-bar{
+      background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+      padding:1rem 2rem;
+      display:flex;align-items:center;justify-content:center;gap:3rem;flex-wrap:wrap;
+    }
+    .trust-item{display:flex;align-items:center;gap:.5rem;color:var(--muted);font-size:.82rem}
+    .trust-icon{font-size:1rem}
+
+    /* ── SECTION BASE ── */
+    section{padding:6rem 1.5rem}
+    .inner{max-width:1100px;margin:0 auto}
+    .section-eyebrow{
+      display:inline-flex;align-items:center;gap:.4rem;
+      color:var(--cyan);font-size:.72rem;font-weight:700;
+      text-transform:uppercase;letter-spacing:.12em;margin-bottom:.75rem;
+    }
+    .section-eyebrow::before{content:'';width:18px;height:2px;background:var(--cyan);border-radius:1px}
+    h2.section-title{
+      font-size:clamp(1.8rem,3vw,2.5rem);font-weight:800;
+      letter-spacing:-.02em;margin-bottom:1rem;
+    }
+    .section-desc{color:var(--muted);font-size:1.05rem;max-width:540px;margin-bottom:3.5rem}
+
+    /* ── FEATURES ── */
+    .features-bg{background:var(--bg2)}
+    .features-grid{
+      display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5px;
+      background:var(--border);border:1px solid var(--border);border-radius:16px;overflow:hidden;
+    }
+    .feat{
+      background:var(--card);padding:2rem;
+      transition:background .2s;
+    }
+    .feat:hover{background:var(--card2)}
+    .feat-icon{
+      width:46px;height:46px;border-radius:12px;margin-bottom:1.25rem;
+      display:flex;align-items:center;justify-content:center;font-size:1.25rem;
+    }
+    .feat h3{font-size:.95rem;font-weight:700;margin-bottom:.5rem}
+    .feat p{color:var(--muted);font-size:.875rem;line-height:1.6}
+    .icon-blue{background:rgba(79,142,247,.15)}
+    .icon-purple{background:rgba(139,92,246,.15)}
+    .icon-cyan{background:rgba(34,211,238,.15)}
+    .icon-green{background:rgba(16,185,129,.15)}
+    .icon-red{background:rgba(244,63,94,.15)}
+    .icon-orange{background:rgba(251,146,60,.15)}
+
+    /* ── COMPARE ── */
+    .compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+    .compare-card{
+      background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2rem;
+    }
+    .compare-card.them{opacity:.7}
+    .compare-card.us{border-color:var(--blue)}
+    .compare-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:1rem}
+    .compare-label.them-label{color:var(--muted)}
+    .compare-label.us-label{color:var(--blue)}
+    .compare-title{font-size:1.1rem;font-weight:800;margin-bottom:1.5rem}
+    .compare-row{display:flex;align-items:flex-start;gap:.6rem;margin-bottom:.7rem;font-size:.875rem}
+    .compare-row .icon{flex-shrink:0;margin-top:.15rem}
+    .them-row .icon{color:var(--dim)}
+    .us-row .icon{color:var(--green)}
+
+    /* ── DASHBOARD MOCKUP ── */
+    .mockup-bg{background:var(--bg2)}
+    .mockup-frame{
+      border:1px solid var(--border2);border-radius:16px;overflow:hidden;
+      box-shadow:0 40px 80px rgba(0,0,0,.6),0 0 0 1px rgba(79,142,247,.1);
+    }
+    .mockup-titlebar{
+      background:#0b1026;padding:.65rem 1.1rem;
+      display:flex;align-items:center;gap:.5rem;
+      border-bottom:1px solid var(--border);
+    }
+    .win-btn{width:11px;height:11px;border-radius:50%}
+    .mockup-url{
+      flex:1;background:var(--card);border-radius:5px;margin:0 .6rem;
+      padding:.22rem .9rem;font-size:.72rem;color:var(--dim);
+      display:flex;align-items:center;gap:.4rem;
+    }
+    .mockup-body{padding:1.5rem;background:var(--bg)}
+    /* top kpis */
+    .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:1.25rem}
+    .kpi{
+      background:var(--card);border:1px solid var(--border);
+      border-radius:10px;padding:1rem;
+    }
+    .kpi-val{font-size:1.7rem;font-weight:800;margin-bottom:.15rem}
+    .kpi-name{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+    .kpi-change{font-size:.7rem;margin-top:.3rem}
+    /* two col layout */
+    .dash-cols{display:grid;grid-template-columns:1fr 1.2fr;gap:.75rem}
+    .dash-panel{
+      background:var(--card);border:1px solid var(--border);
+      border-radius:10px;overflow:hidden;
+    }
+    .dash-panel-head{
+      padding:.65rem 1rem;border-bottom:1px solid var(--border);
+      font-size:.75rem;font-weight:700;color:var(--muted);
+      display:flex;align-items:center;justify-content:space-between;
+    }
+    .status-dot{width:6px;height:6px;border-radius:50%}
+    .agent-row{
+      display:flex;align-items:center;gap:.6rem;
+      padding:.55rem 1rem;border-bottom:1px solid rgba(30,45,71,.6);
+      font-size:.78rem;
+    }
+    .agent-row:last-child{border-bottom:none}
+    .agent-status{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+    .agent-name{flex:1;font-weight:500}
+    .agent-os{color:var(--muted);font-size:.7rem}
+    .agent-score{font-size:.7rem;padding:.15rem .5rem;border-radius:4px;font-weight:700}
+    .score-ok{background:rgba(16,185,129,.15);color:var(--green)}
+    .score-warn{background:rgba(251,146,60,.15);color:var(--orange)}
+    .score-bad{background:rgba(244,63,94,.15);color:var(--red)}
+    .alert-item{
+      display:flex;align-items:flex-start;gap:.65rem;
+      padding:.6rem 1rem;border-bottom:1px solid rgba(30,45,71,.6);
+      font-size:.77rem;
+    }
+    .alert-item:last-child{border-bottom:none}
+    .sev-pill{
+      flex-shrink:0;padding:.15rem .45rem;border-radius:4px;
+      font-size:.65rem;font-weight:800;text-transform:uppercase;margin-top:.1rem;
+    }
+    .sev-crit{background:rgba(244,63,94,.2);color:var(--red)}
+    .sev-high{background:rgba(251,146,60,.2);color:var(--orange)}
+    .sev-med{background:rgba(251,191,36,.15);color:var(--yellow)}
+    .alert-text{flex:1;line-height:1.4}
+    .alert-time{color:var(--dim);font-size:.68rem;white-space:nowrap;margin-top:.1rem}
+
+    /* ── HOW IT WORKS ── */
+    .steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative}
+    .steps-grid::before{
+      content:'';position:absolute;top:28px;left:12.5%;right:12.5%;height:1px;
+      background:linear-gradient(90deg,transparent,var(--border2),var(--border2),transparent);
+    }
+    .step-item{padding:1rem;text-align:center;position:relative}
+    .step-circle{
+      width:56px;height:56px;border-radius:50%;
+      background:linear-gradient(135deg,var(--blue),var(--purple));
+      display:flex;align-items:center;justify-content:center;
+      font-weight:900;font-size:1.1rem;margin:0 auto 1.25rem;
+      position:relative;z-index:1;
+    }
+    .step-item h3{font-size:.9rem;font-weight:700;margin-bottom:.4rem}
+    .step-item p{color:var(--muted);font-size:.82rem;line-height:1.55}
+
+    /* ── PRICING ── */
+    .pricing-bg{background:var(--bg2)}
+    .pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;align-items:start}
+    .price-card{
+      background:var(--card);border:1px solid var(--border);
+      border-radius:16px;padding:2rem;position:relative;
+    }
+    .price-card.pop{
+      border-color:var(--blue);
+      background:linear-gradient(160deg,rgba(79,142,247,.06) 0%,var(--card) 100%);
+    }
+    .pop-tag{
+      position:absolute;top:-13px;left:50%;transform:translateX(-50%);
+      background:linear-gradient(135deg,var(--blue),var(--purple));
+      color:#fff;font-size:.7rem;font-weight:800;
+      padding:.25rem .85rem;border-radius:99px;white-space:nowrap;
+      letter-spacing:.03em;
+    }
+    .price-name{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--cyan);margin-bottom:.5rem}
+    .price-amount{font-size:2.6rem;font-weight:900;letter-spacing:-.02em;margin-bottom:.25rem}
+    .price-amount sub{font-size:1rem;font-weight:400;color:var(--muted);vertical-align:baseline}
+    .price-devices{color:var(--muted);font-size:.82rem;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border)}
+    .price-list{list-style:none;display:flex;flex-direction:column;gap:.65rem;margin-bottom:2rem}
+    .price-list li{font-size:.86rem;display:flex;gap:.5rem;align-items:flex-start}
+    .price-list li::before{content:'✓';color:var(--green);font-weight:800;flex-shrink:0}
+    .price-list li.dim::before{content:'–';color:var(--dim)}
+    .price-list li.dim{color:var(--dim)}
+    .price-btn{
+      display:block;text-align:center;padding:.8rem;border-radius:10px;
+      font-weight:700;font-size:.9rem;text-decoration:none;transition:all .2s;
+    }
+    .price-btn-fill{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;box-shadow:0 0 20px rgba(79,142,247,.3)}
+    .price-btn-fill:hover{box-shadow:0 0 35px rgba(79,142,247,.5);transform:translateY(-1px)}
+    .price-btn-line{border:1px solid var(--border2);color:var(--text)}
+    .price-btn-line:hover{background:var(--card2);transform:translateY(-1px)}
+
+    /* ── CTA BANNER ── */
+    .cta-banner{
+      margin:0 1.5rem;border-radius:20px;
+      background:linear-gradient(135deg,#0d1b3e 0%,#0f1535 50%,#150d2e 100%);
+      border:1px solid rgba(79,142,247,.2);
+      padding:4rem 3rem;text-align:center;position:relative;overflow:hidden;
+    }
+    .cta-banner::before{
+      content:'';position:absolute;inset:0;
+      background:radial-gradient(ellipse 60% 80% at 50% 50%,rgba(79,142,247,.08) 0%,transparent 70%);
+    }
+    .cta-inner{position:relative;z-index:1}
+    .cta-banner h2{font-size:clamp(1.8rem,3vw,2.8rem);font-weight:900;margin-bottom:1rem;letter-spacing:-.02em}
+    .cta-banner p{color:var(--muted);font-size:1.05rem;max-width:520px;margin:0 auto 2rem}
+
+    /* ── CONTACT ── */
+    .contact-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:4rem;align-items:start}
+    .contact-info h2{font-size:2rem;font-weight:800;letter-spacing:-.02em;margin-bottom:1rem}
+    .contact-info p{color:var(--muted);margin-bottom:2rem;line-height:1.7}
+    .contact-detail{
+      display:flex;align-items:center;gap:.85rem;margin-bottom:1rem;
+    }
+    .cd-icon{
+      width:38px;height:38px;border-radius:9px;
+      background:rgba(79,142,247,.12);display:flex;align-items:center;justify-content:center;
+      flex-shrink:0;font-size:.95rem;
+    }
+    .cd-text{font-size:.875rem}
+    .cd-text strong{display:block;color:var(--text);font-weight:700}
+    .cd-text span{color:var(--muted)}
+    form{display:flex;flex-direction:column;gap:.85rem}
+    input,textarea,select{
+      background:var(--card2);border:1px solid var(--border);
+      color:var(--text);padding:.8rem 1.1rem;
+      border-radius:10px;font-size:.9rem;font-family:inherit;
+      outline:none;transition:border-color .2s;
+    }
+    input:focus,textarea:focus,select:focus{border-color:var(--blue)}
+    input::placeholder,textarea::placeholder{color:var(--dim)}
+    textarea{resize:vertical;min-height:120px}
+    select option{background:var(--card)}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:.85rem}
+    .btn-submit{
+      background:linear-gradient(135deg,var(--blue),var(--purple));
+      color:#fff;border:none;padding:.9rem;border-radius:10px;
+      font-size:1rem;font-weight:700;cursor:pointer;
+      box-shadow:0 0 25px rgba(79,142,247,.3);
+      transition:all .2s;
+    }
+    .btn-submit:hover{box-shadow:0 0 40px rgba(79,142,247,.5);transform:translateY(-2px)}
+
+    /* ── FOOTER ── */
+    footer{
+      border-top:1px solid var(--border);padding:2rem 2.5rem;
+      display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;
+    }
+    .footer-logo{font-weight:800;font-size:.95rem;color:var(--muted)}
+    .footer-logo span{color:var(--cyan)}
+    footer p{color:var(--dim);font-size:.8rem}
+    footer a{color:var(--blue);text-decoration:none}
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:900px){
+      nav ul{display:none}
+      .hero-metrics{grid-template-columns:repeat(2,1fr)}
+      .compare-grid,.dash-cols,.steps-grid,.pricing-grid,.contact-grid{grid-template-columns:1fr}
+      .steps-grid::before{display:none}
+      .cta-banner{margin:0;border-radius:0}
+    }
+    @media(max-width:600px){
+      .kpi-row{grid-template-columns:repeat(2,1fr)}
+      .form-row{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo">
+    <div class="logo-mark">🛡️</div>
+    <span class="logo-text">Somo<span>Shield</span></span>
+  </a>
+  <ul>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how">Process</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="https://examplesoc.somotechs.com/demo" class="nav-demo">🔴 Live Demo</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <div class="hero-content">
+    <div class="live-badge"><div class="live-dot"></div>Monitoring 1,500+ endpoints right now</div>
+    <h1>
+      <span class="h1-plain">Your Business Deserves<br></span>
+      <span class="h1-grad">Real Security.</span>
+    </h1>
+    <p class="hero-sub">
+      SomoShield delivers a full managed security operations center to Missouri small businesses —
+      threat detection, endpoint management, and live monitoring at a price that actually makes sense.
+    </p>
+    <div class="hero-ctas">
+      <a href="https://examplesoc.somotechs.com/demo" class="btn btn-glow">🔴 View Live Demo</a>
+      <a href="#pricing" class="btn btn-ghost">See Pricing →</a>
+    </div>
+    <div class="hero-metrics">
+      <div class="metric"><div class="metric-val">1,500+</div><div class="metric-label">Endpoints</div></div>
+      <div class="metric"><div class="metric-val">14</div><div class="metric-label">Businesses</div></div>
+      <div class="metric"><div class="metric-val">24/7</div><div class="metric-label">Monitoring</div></div>
+      <div class="metric"><div class="metric-val">10yr</div><div class="metric-label">Experience</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<div class="trust-bar">
+  <div class="trust-item"><span class="trust-icon">🏛️</span> City Hall & Government</div>
+  <div class="trust-item"><span class="trust-icon">🏢</span> Professional Services</div>
+  <div class="trust-item"><span class="trust-icon">🏭</span> Food Distribution</div>
+  <div class="trust-item"><span class="trust-icon">🏥</span> Healthcare Adjacent</div>
+  <div class="trust-item"><span class="trust-icon">🔒</span> Missouri-Based &amp; Operated</div>
+</div>
+
+<!-- FEATURES -->
+<section class="features-bg" id="features">
+  <div class="inner">
+    <div class="section-eyebrow">What's Included</div>
+    <h2 class="section-title">One subscription. Full coverage.</h2>
+    <p class="section-desc">No piecing together tools from different vendors. SomoShield is a complete, managed security stack — deployed and monitored by us.</p>
+    <div class="features-grid">
+      <div class="feat">
+        <div class="feat-icon icon-blue">🛡️</div>
+        <h3>SIEM & Threat Detection</h3>
+        <p>Wazuh-powered security monitoring catches intrusions, malware, and policy violations the moment they happen — not days later.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon icon-purple">📊</div>
+        <h3>Your Own SOC Dashboard</h3>
+        <p>A live, branded security operations center showing every agent, alert, and threat score. You always know exactly what's happening.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon icon-cyan">💻</div>
+        <h3>Endpoint MDM & Patching</h3>
+        <p>Every device stays patched, compliant, and visible. Deploy scripts and policies across your entire fleet remotely.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon icon-green">🔐</div>
+        <h3>Secure Remote Access</h3>
+        <p>Self-hosted remote support that doesn't route through someone else's cloud. Fast, private, and always available.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon icon-orange">💾</div>
+        <h3>Encrypted Backups</h3>
+        <p>Incremental, encrypted, verifiable backups with fast restores. Satisfy auditors and sleep at night.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon icon-red">🚨</div>
+        <h3>Intrusion Prevention</h3>
+        <p>Shared threat intelligence bans malicious IPs at the firewall before they touch your systems.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US vs BIG GUYS -->
+<section id="why">
+  <div class="inner">
+    <div class="section-eyebrow">Why SomoShield</div>
+    <h2 class="section-title">Not a corporation. Not a ticket queue.</h2>
+    <p class="section-desc">Big MSSPs charge enterprise prices and you get a help desk rep who's never seen your network. We're different.</p>
+    <div class="compare-grid">
+      <div class="compare-card them">
+        <div class="compare-label them-label">Big MSSP / Enterprise</div>
+        <div class="compare-title">You're Account #4,829</div>
+        <div class="compare-row them-row"><span class="icon">✗</span> $2,000–$10,000+/mo</div>
+        <div class="compare-row them-row"><span class="icon">✗</span> 6-month implementation</div>
+        <div class="compare-row them-row"><span class="icon">✗</span> Tier-1 support tickets</div>
+        <div class="compare-row them-row"><span class="icon">✗</span> One-size-fits-all packages</div>
+        <div class="compare-row them-row"><span class="icon">✗</span> You don't own your data</div>
+        <div class="compare-row them-row"><span class="icon">✗</span> Dashboard access extra</div>
+      </div>
+      <div class="compare-card us">
+        <div class="compare-label us-label">SomoShield by SomoTechs</div>
+        <div class="compare-title">You Talk to the Person Who Built It</div>
+        <div class="compare-row us-row"><span class="icon">✓</span> $299–$599/mo flat rate</div>
+        <div class="compare-row us-row"><span class="icon">✓</span> Live in days, not months</div>
+        <div class="compare-row us-row"><span class="icon">✓</span> Direct line to your engineer</div>
+        <div class="compare-row us-row"><span class="icon">✓</span> Built around your business</div>
+        <div class="compare-row us-row"><span class="icon">✓</span> Self-hosted — your data stays yours</div>
+        <div class="compare-row us-row"><span class="icon">✓</span> Full dashboard included always</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DASHBOARD MOCKUP -->
+<section class="mockup-bg" id="demo">
+  <div class="inner">
+    <div class="section-eyebrow">Live Demo</div>
+    <h2 class="section-title">This is what your dashboard looks like.</h2>
+    <p class="section-desc">Real data. Real alerts. The same view your engineer watches 24/7 — now yours too.</p>
+    <div class="mockup-frame">
+      <div class="mockup-titlebar">
+        <div class="win-btn" style="background:#f43f5e"></div>
+        <div class="win-btn" style="background:#fbbf24"></div>
+        <div class="win-btn" style="background:#10b981"></div>
+        <div class="mockup-url">🔒 <span>examplesoc.somotechs.com/demo</span></div>
+      </div>
+      <div class="mockup-body">
+        <div class="kpi-row">
+          <div class="kpi">
+            <div class="kpi-val" style="color:var(--green)">1,500</div>
+            <div class="kpi-name">Agents Online</div>
+            <div class="kpi-change" style="color:var(--green)">↑ All healthy</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-val" style="color:var(--red)">3</div>
+            <div class="kpi-name">Critical Alerts</div>
+            <div class="kpi-change" style="color:var(--red)">↑ Needs attention</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-val" style="color:var(--orange)">11</div>
+            <div class="kpi-name">Warnings</div>
+            <div class="kpi-change" style="color:var(--muted)">Last 24 hours</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-val" style="color:var(--blue)">98.7%</div>
+            <div class="kpi-name">Uptime</div>
+            <div class="kpi-change" style="color:var(--green)">↑ 30-day avg</div>
+          </div>
+        </div>
+        <div class="dash-cols">
+          <div class="dash-panel">
+            <div class="dash-panel-head">
+              <span>ENDPOINT STATUS</span>
+              <div class="status-dot" style="background:var(--green)"></div>
+            </div>
+            <div class="agent-row"><div class="agent-status" style="background:var(--green)"></div><div class="agent-name">DESKTOP-GCF042</div><div class="agent-os">Win 11</div><div class="agent-score score-ok">A+</div></div>
+            <div class="agent-row"><div class="agent-status" style="background:var(--green)"></div><div class="agent-name">SERVER-MAIN</div><div class="agent-os">Server 2022</div><div class="agent-score score-ok">A</div></div>
+            <div class="agent-row"><div class="agent-status" style="background:var(--orange)"></div><div class="agent-name">WS-LCMANOR-02</div><div class="agent-os">Win 10</div><div class="agent-score score-warn">C</div></div>
+            <div class="agent-row"><div class="agent-status" style="background:var(--green)"></div><div class="agent-name">OFFICE-PC-07</div><div class="agent-os">Win 11</div><div class="agent-score score-ok">B+</div></div>
+            <div class="agent-row"><div class="agent-status" style="background:var(--red)"></div><div class="agent-name">KIOSK-01</div><div class="agent-os">Win 10</div><div class="agent-score score-bad">D</div></div>
+          </div>
+          <div class="dash-panel">
+            <div class="dash-panel-head">
+              <span>RECENT ALERTS</span>
+              <div class="status-dot" style="background:var(--red);animation:livepulse 1.6s infinite"></div>
+            </div>
+            <div class="alert-item">
+              <div class="sev-pill sev-crit">CRIT</div>
+              <div class="alert-text">Brute force attack — 47 failed logins in 2 min<br><span style="color:var(--dim);font-size:.7rem">DESKTOP-GCF042</span></div>
+              <div class="alert-time">2m ago</div>
+            </div>
+            <div class="alert-item">
+              <div class="sev-pill sev-high">HIGH</div>
+              <div class="alert-text">Suspicious outbound to unknown IP:4444<br><span style="color:var(--dim);font-size:.7rem">WS-LCMANOR-02</span></div>
+              <div class="alert-time">14m ago</div>
+            </div>
+            <div class="alert-item">
+              <div class="sev-pill sev-med">MED</div>
+              <div class="alert-text">AV definitions outdated 14 days<br><span style="color:var(--dim);font-size:.7rem">OFFICE-PC-07</span></div>
+              <div class="alert-time">1h ago</div>
+            </div>
+            <div class="alert-item">
+              <div class="sev-pill sev-crit">CRIT</div>
+              <div class="alert-text">Failed RDP from external IP 185.220.x.x<br><span style="color:var(--dim);font-size:.7rem">SERVER-MAIN</span></div>
+              <div class="alert-time">3h ago</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:2rem">
+      <a href="https://examplesoc.somotechs.com/demo" class="btn btn-glow">Explore the Full Live Demo →</a>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="inner">
+    <div class="section-eyebrow">The Process</div>
+    <h2 class="section-title">Protected in days, not months.</h2>
+    <p class="section-desc">No six-month rollouts. No enterprise red tape. We move fast because your security can't wait.</p>
+    <div class="steps-grid">
+      <div class="step-item">
+        <div class="step-circle">1</div>
+        <h3>Discovery Call</h3>
+        <p>30 minutes. We map your environment, count devices, and scope the work. No pressure, no sales pitch.</p>
+      </div>
+      <div class="step-item">
+        <div class="step-circle">2</div>
+        <h3>Agent Deployment</h3>
+        <p>One PowerShell command deploys our agent to every Windows machine — remotely, silently, in minutes.</p>
+      </div>
+      <div class="step-item">
+        <div class="step-circle">3</div>
+        <h3>Dashboard Live</h3>
+        <p>Your SOC dashboard lights up with real-time data. Every endpoint, every alert, every threat score.</p>
+      </div>
+      <div class="step-item">
+        <div class="step-circle">4</div>
+        <h3>We Watch 24/7</h3>
+        <p>Ongoing monitoring, patching, and monthly reports. You focus on running your business.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-bg" id="pricing">
+  <div class="inner">
+    <div class="section-eyebrow">Pricing</div>
+    <h2 class="section-title">Flat rate. No surprises.</h2>
+    <p class="section-desc">One monthly fee covers your entire security stack. No per-seat gotchas, no add-on fees.</p>
+    <div class="pricing-grid">
+
+      <div class="price-card">
+        <div class="price-name">Starter</div>
+        <div class="price-amount">$299<sub>/mo</sub></div>
+        <div class="price-devices">Up to 10 endpoints</div>
+        <ul class="price-list">
+          <li>SIEM &amp; threat detection</li>
+          <li>Live SOC dashboard</li>
+          <li>Automated backups</li>
+          <li>Monthly security report</li>
+          <li>Email support</li>
+          <li class="dim">MDM &amp; patch management</li>
+          <li class="dim">Remote access included</li>
+          <li class="dim">Intrusion prevention</li>
+        </ul>
+        <a href="#contact" class="price-btn price-btn-line">Get Started</a>
+      </div>
+
+      <div class="price-card pop">
+        <div class="pop-tag">⭐ Most Popular</div>
+        <div class="price-name">Business</div>
+        <div class="price-amount">$599<sub>/mo</sub></div>
+        <div class="price-devices">Up to 30 endpoints</div>
+        <ul class="price-list">
+          <li>Everything in Starter</li>
+          <li>MDM &amp; patch management</li>
+          <li>Remote access (self-hosted)</li>
+          <li>Intrusion prevention</li>
+          <li>Compliance reporting</li>
+          <li>Priority phone support</li>
+          <li>Direct engineer line</li>
+          <li>Quarterly security review</li>
+        </ul>
+        <a href="#contact" class="price-btn price-btn-fill">Get Started</a>
+      </div>
+
+      <div class="price-card">
+        <div class="price-name">Enterprise</div>
+        <div class="price-amount">Custom</div>
+        <div class="price-devices">30+ endpoints / multi-site</div>
+        <ul class="price-list">
+          <li>Everything in Business</li>
+          <li>Multi-site management</li>
+          <li>Custom integrations</li>
+          <li>Dedicated onboarding</li>
+          <li>SLA guarantee</li>
+          <li>Custom compliance reporting</li>
+          <li>On-site visits available</li>
+          <li>White-label option</li>
+        </ul>
+        <a href="#contact" class="price-btn price-btn-line">Let's Talk</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<div class="cta-banner">
+  <div class="cta-inner">
+    <h2>See it live before you commit.</h2>
+    <p>Our demo dashboard is running right now with real data. Click around, break it, judge it. No forms, no email required.</p>
+    <div class="hero-ctas">
+      <a href="https://examplesoc.somotechs.com/demo" class="btn btn-glow">🔴 Open Live Demo</a>
+      <a href="#contact" class="btn btn-ghost">Schedule a Call →</a>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="inner">
+    <div class="contact-grid">
+      <div class="contact-info">
+        <div class="section-eyebrow">Contact</div>
+        <h2>Let's talk about your security.</h2>
+        <p>No call centers, no scripts. You talk directly to the engineer who built and runs SomoShield. Usually reply same day.</p>
+        <div class="contact-detail">
+          <div class="cd-icon">📧</div>
+          <div class="cd-text"><strong>Email</strong><span>helpdesk@somotechs.com</span></div>
+        </div>
+        <div class="contact-detail">
+          <div class="cd-icon">🏢</div>
+          <div class="cd-text"><strong>Company</strong><span>SomoTechs</span></div>
+        </div>
+        <div class="contact-detail">
+          <div class="cd-icon">📍</div>
+          <div class="cd-text"><strong>Service Area</strong><span>Missouri &amp; surrounding states</span></div>
+        </div>
+        <div class="contact-detail">
+          <div class="cd-icon">⚡</div>
+          <div class="cd-text"><strong>Response Time</strong><span>Same business day</span></div>
+        </div>
+      </div>
+      <form id="contact-form">
+        <div class="form-row">
+          <input type="text" name="name" placeholder="Your Name" required/>
+          <input type="text" name="company" placeholder="Company Name"/>
+        </div>
+        <input type="email" name="email" placeholder="Email Address" required/>
+        <input type="tel" name="phone" placeholder="Phone Number"/>
+        <select name="plan">
+          <option value="" disabled selected>Interested in which plan?</option>
+          <option>Starter — $299/mo</option>
+          <option>Business — $599/mo</option>
+          <option>Enterprise — Custom</option>
+          <option>Just exploring</option>
+        </select>
+        <input type="number" name="devices" placeholder="Number of devices / endpoints"/>
+        <textarea name="message" placeholder="Tell us about your business and what you're looking to protect..."></textarea>
+        <button type="submit" class="btn-submit">Send Message →</button>
+      </form>
+<script>
+document.getElementById('contact-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var f = this;
+  var name    = f.querySelector('[name="name"]').value.trim();
+  var company = f.querySelector('[name="company"]').value.trim();
+  var email   = f.querySelector('[name="email"]').value.trim();
+  var phone   = f.querySelector('[name="phone"]').value.trim();
+  var plan    = f.querySelector('[name="plan"]').value;
+  var devices = f.querySelector('[name="devices"]').value.trim();
+  var message = f.querySelector('[name="message"]').value.trim();
+  var lines = [
+    'Name: ' + name,
+    company ? 'Company: ' + company : null,
+    'Email: ' + email,
+    phone   ? 'Phone: ' + phone : null,
+    plan    ? 'Interested In: ' + plan : null,
+    devices ? 'Devices / Endpoints: ' + devices : null,
+    '',
+    'Message:',
+    message || '(no message)'
+  ];
+  var body = lines.filter(function(l){ return l !== null; }).join('\n');
+  var subject = 'SomoShield Inquiry' + (name ? ' \u2014 ' + name : '');
+  window.location.href = 'mailto:helpdesk@somotechs.com'
+    + '?subject=' + encodeURIComponent(subject)
+    + '&body='    + encodeURIComponent(body);
+});
+</script>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">Somo<span>Shield</span> by SomoTechs</div>
+  <p>© 2026 SomoTechs · Missouri · <a href="mailto:helpdesk@somotechs.com">helpdesk@somotechs.com</a></p>
+</footer>
+
+</body>
+</html>

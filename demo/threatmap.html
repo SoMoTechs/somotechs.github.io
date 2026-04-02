@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SomoShield — Live Threat Map</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/globe.gl@2.30.0/dist/globe.gl.min.js"></script>
+<style>
+:root{
+  --bg:#080c14;--surface:#0e1420;--surface-2:#141b29;
+  --border:rgba(255,255,255,0.07);--border-2:rgba(255,255,255,0.13);
+  --accent:#1D6FFF;--green:#22c55e;--amber:#f59e0b;--red:#ef4444;
+  --text:#e8eaf0;--text-muted:#8892a4;--text-subtle:#64748b;
+  --header-h:52px;--demo-h:38px;--sidebar-w:280px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;background:#050608;}
+body{font-family:'Inter',system-ui,sans-serif;color:var(--text);display:flex;flex-direction:column;}
+
+/* DEMO BANNER */
+.demo-banner{
+  height:var(--demo-h);flex-shrink:0;z-index:600;
+  background:linear-gradient(90deg,rgba(139,92,246,.25),rgba(29,111,255,.2),rgba(139,92,246,.25));
+  border-bottom:1px solid rgba(139,92,246,.4);
+  display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;
+  font-size:12px;font-weight:600;
+}
+.demo-banner-left{display:flex;align-items:center;gap:.6rem;color:#c4b5fd;}
+.demo-banner a{color:#fff;text-decoration:none;background:linear-gradient(135deg,#8b5cf6,#1D6FFF);padding:.28rem .85rem;border-radius:6px;font-size:11px;font-weight:700;}
+
+/* HEADER */
+#header{
+  flex-shrink:0;height:var(--header-h);z-index:500;
+  background:rgba(10,11,15,0.97);border-bottom:1px solid var(--border);
+  backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:space-between;padding:0 20px;
+}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.brand-icon{width:30px;height:30px;background:linear-gradient(135deg,var(--accent),#8b5cf6);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:15px;}
+.brand-title{font-size:13px;font-weight:700;color:var(--text);}
+.brand-sub{font-size:10px;color:var(--text-subtle);}
+.hstats{display:flex;gap:4px;}
+.hstat{padding:4px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:6px;text-align:center;border-top:2px solid transparent;}
+.hstat.s1{border-top-color:var(--red);}
+.hstat.s2{border-top-color:var(--amber);}
+.hstat.s3{border-top-color:var(--green);}
+.hstat-val{font-size:17px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums;}
+.hstat.s1 .hstat-val{color:var(--red);}
+.hstat.s2 .hstat-val{color:var(--amber);}
+.hstat.s3 .hstat-val{color:var(--green);}
+.hstat-lbl{font-size:9px;color:var(--text-subtle);text-transform:uppercase;letter-spacing:.4px;}
+.nav-links{display:flex;gap:3px;}
+.nav-link{padding:5px 10px;border:1px solid var(--border);background:transparent;font-size:12px;font-weight:500;color:var(--text-muted);text-decoration:none;border-radius:5px;transition:all .15s;}
+.nav-link:hover,.nav-link.active{color:var(--text);background:rgba(255,255,255,.06);border-color:var(--border-2);}
+
+/* BODY (globe + sidebar) */
+.map-body{display:flex;flex:1;min-height:0;position:relative;}
+#globe-wrap{flex:1;position:relative;}
+#globeViz{width:100%;height:100%;}
+
+/* SIDEBAR */
+#sidebar{
+  width:var(--sidebar-w);flex-shrink:0;
+  background:rgba(10,11,15,0.97);border-left:1px solid var(--border);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.s-filter{padding:10px 12px;display:flex;gap:6px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.s-select{flex:1;background:var(--surface-2);border:1px solid var(--border);color:var(--text);font-family:'Inter',sans-serif;font-size:12px;padding:5px 8px;outline:none;border-radius:5px;}
+.btn-sm{padding:5px 10px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:14px;cursor:pointer;border-radius:5px;transition:all .15s;}
+.btn-sm:hover{background:rgba(255,255,255,.06);color:var(--text);}
+.btn-us{border-color:rgba(34,197,94,.3);color:var(--green);}
+.btn-us.active{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.5);}
+.s-section{border-bottom:1px solid var(--border);flex-shrink:0;}
+.s-title{padding:7px 12px;font-size:10px;font-weight:600;color:var(--text-subtle);text-transform:uppercase;letter-spacing:.6px;background:rgba(0,0,0,.2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--red);animation:blink .8s ease-in-out infinite;flex-shrink:0;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.15;}}
+.c-item{display:flex;align-items:center;gap:5px;padding:6px 12px;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:background .12s;}
+.c-item:hover{background:rgba(255,255,255,.04);}
+.c-item.us{background:rgba(34,197,94,.03);}
+.c-item.us:hover{background:rgba(34,197,94,.07);}
+.c-flag{font-size:14px;width:20px;text-align:center;flex-shrink:0;}
+.c-name{font-size:11px;flex:1;color:var(--text-muted);}
+.c-item.us .c-name{color:var(--green);}
+.c-bar-wrap{width:50px;height:3px;background:rgba(255,255,255,.06);border-radius:2px;}
+.c-bar{height:100%;background:var(--red);border-radius:2px;}
+.c-item.us .c-bar{background:var(--green);}
+.c-num{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--amber);min-width:30px;text-align:right;}
+#feed-list{overflow-y:auto;flex:1;}
+#feed-list::-webkit-scrollbar{width:3px;}
+#feed-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);}
+.f-item{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:background .12s;}
+.f-item:hover{background:rgba(255,255,255,.04);}
+.f-item.us{border-left:2px solid var(--green);background:rgba(34,197,94,.03);}
+.f-item.new{animation:fnew 1s ease 2;}
+@keyframes fnew{0%,100%{background:rgba(34,197,94,.03);}50%{background:rgba(34,197,94,.14);}}
+.f-row1{display:flex;justify-content:space-between;align-items:center;}
+.f-ip{color:var(--amber);font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;}
+.f-time{font-size:9px;color:var(--text-subtle);font-family:'JetBrains Mono',monospace;}
+.f-row2{font-size:10px;color:var(--text-subtle);margin-top:2px;}
+.f-rule{font-size:10px;color:var(--text-muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ldot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:3px;vertical-align:middle;}
+.us-badge{font-size:9px;font-weight:600;border:1px solid rgba(34,197,94,.3);color:var(--green);padding:0 4px;border-radius:3px;margin-left:4px;}
+.toast{position:fixed;top:100px;right:calc(var(--sidebar-w) + 12px);z-index:1000;background:rgba(10,11,15,.98);border:1px solid var(--border);border-left:3px solid var(--red);padding:10px 14px;min-width:240px;max-width:300px;border-radius:7px;box-shadow:0 8px 32px rgba(0,0,0,.5);animation:tin .25s ease;}
+@keyframes tin{from{transform:translateX(20px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+.toast-hd{font-size:10px;font-weight:600;color:var(--red);display:flex;justify-content:space-between;text-transform:uppercase;letter-spacing:.4px;}
+.toast-x{cursor:pointer;color:var(--text-subtle);}
+.toast-ip{color:var(--amber);font-family:'JetBrains Mono',monospace;font-size:12px;margin-top:4px;}
+.toast-sub{font-size:10px;color:var(--text-subtle);margin-top:2px;}
+.globe-popup{background:rgba(10,11,15,.98);border:1px solid var(--border-2);padding:10px 14px;min-width:180px;border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,.6);}
+.gp-ip{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;color:var(--amber);margin-bottom:6px;}
+.gp-row{font-size:11px;margin:2px 0;color:var(--text-muted);}
+.gp-row b{color:var(--text-subtle);font-size:9px;text-transform:uppercase;letter-spacing:.5px;margin-right:6px;}
+#cycle-wrap{height:2px;background:rgba(255,255,255,.05);flex-shrink:0;}
+#cycle-fill{height:100%;background:var(--green);width:0%;}
+</style>
+</head>
+<body>
+
+<div class="demo-banner">
+  <div class="demo-banner-left">🔴 <strong>LIVE DEMO</strong> — Real globe.gl rendering with simulated attack data. Your live system shows actual Wazuh threat intel.</div>
+  <div><a href="https://examplesoc.somotechs.com/#contact">Get SomoShield →</a></div>
+</div>
+
+<div id="header">
+  <a class="brand" href="/demo/">
+    <div class="brand-icon">🛡️</div>
+    <div>
+      <div class="brand-title">SomoShield SOC</div>
+      <div class="brand-sub">Live Global Attack Intelligence</div>
+    </div>
+  </a>
+  <div class="hstats">
+    <div class="hstat s1"><div class="hstat-val" id="st-total">0</div><div class="hstat-lbl">Total Attacks</div></div>
+    <div class="hstat s2"><div class="hstat-val" id="st-ips">0</div><div class="hstat-lbl">Unique IPs</div></div>
+    <div class="hstat s3"><div class="hstat-val" id="st-us">0</div><div class="hstat-lbl">US Sources</div></div>
+  </div>
+  <nav class="nav-links">
+    <a href="/demo/" class="nav-link">Dashboard</a>
+    <a href="/demo/alerts.html" class="nav-link">Alerts</a>
+    <a href="/demo/threatmap.html" class="nav-link active">Threat Map</a>
+    <a href="/demo/blocked.html" class="nav-link">Blocked IPs</a>
+  </nav>
+</div>
+
+<div class="map-body">
+  <div id="globe-wrap"><div id="globeViz"></div></div>
+
+  <div id="sidebar">
+    <div class="s-filter">
+      <select class="s-select" id="f-hours">
+        <option value="1">Last 1 hour</option>
+        <option value="6">Last 6 hours</option>
+        <option value="24" selected>Last 24 hours</option>
+        <option value="168">Last 7 days</option>
+      </select>
+      <button class="btn-sm btn-us" id="btn-us" onclick="toggleUS()" title="Focus US attacks">🇺🇸</button>
+    </div>
+    <div id="cycle-wrap"><div id="cycle-fill"></div></div>
+    <div class="s-section">
+      <div class="s-title">Top Countries</div>
+      <div id="country-list"></div>
+    </div>
+    <div class="s-title" style="border-bottom:1px solid var(--border);">
+      <span class="live-dot"></span>Live Attack Feed
+    </div>
+    <div id="feed-list"></div>
+  </div>
+</div>
+
+<script>
+// ── GLOBE INIT ──
+const globeEl = document.getElementById('globeViz');
+const wrapEl  = document.getElementById('globe-wrap');
+
+const globe = Globe({animateIn:true})(globeEl)
+  .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-night.jpg')
+  .backgroundImageUrl('https://unpkg.com/three-globe/example/img/night-sky.png')
+  .showAtmosphere(true).atmosphereColor('rgba(0,100,255,0.18)').atmosphereAltitude(0.22)
+  .arcsData([]).arcStartLat(d=>d.srcLat).arcStartLng(d=>d.srcLon)
+  .arcEndLat(d=>d.dstLat).arcEndLng(d=>d.dstLon)
+  .arcColor(d=>[d.color,'rgba(255,255,255,0.05)'])
+  .arcAltitude(d=>d.alt).arcStroke(d=>d.stroke)
+  .arcDashLength(0.45).arcDashGap(0.2).arcDashAnimateTime(d=>d.speed)
+  .arcLabel(d=>`<div class="globe-popup"><div class="gp-ip">${d.ip}</div><div class="gp-row"><b>Country</b>${d.country}</div><div class="gp-row"><b>Level</b>${d.level}</div></div>`)
+  .pointsData([]).pointLat(d=>d.lat).pointLng(d=>d.lon)
+  .pointColor(d=>d.color).pointAltitude(0.005).pointRadius(d=>d.radius)
+  .pointLabel(d=>`<div class="globe-popup"><div class="gp-ip">${d.ip}</div><div class="gp-row"><b>Country</b>${d.country}</div><div class="gp-row"><b>Hits</b>${d.count.toLocaleString()}</div><div class="gp-row"><b>Level</b>${d.level}</div>${d.us?'<div style="color:var(--green);font-size:10px;margin-top:6px">🇺🇸 US Source</div>':''}</div>`)
+  .onPointClick(d=>{if(d.us)flyToUS(d);})
+  .ringsData([]).ringLat(d=>d.lat).ringLng(d=>d.lon)
+  .ringColor(d=>t=>`rgba(${d.rgb},${Math.max(0,1-t)})`)
+  .ringMaxRadius(d=>d.maxR).ringPropagationSpeed(d=>d.speed).ringRepeatPeriod(d=>d.period);
+
+function resizeGlobe(){globe.width(wrapEl.offsetWidth).height(wrapEl.offsetHeight);}
+resizeGlobe();
+window.addEventListener('resize',resizeGlobe);
+globe.pointOfView({lat:30,lng:10,altitude:2.0},0);
+globe.controls().autoRotate=true;
+globe.controls().autoRotateSpeed=0.3;
+globeEl.addEventListener('mousedown',()=>{globe.controls().autoRotate=false;});
+
+// ── HELPERS ──
+function levelColor(l){if(l>=15)return'#ff0022';if(l>=12)return'#ff2244';if(l>=10)return'#ff6600';if(l>=7)return'#ffaa00';if(l>=4)return'#00aaff';return'#0066ff';}
+function levelRgb(l){if(l>=15)return'255,0,34';if(l>=12)return'255,34,68';if(l>=10)return'255,102,0';if(l>=7)return'255,170,0';return'0,102,255';}
+function levelStroke(l){if(l>=12)return 0.7;if(l>=7)return 0.5;return 0.35;}
+function levelAlt(l){if(l>=12)return 0.38;if(l>=7)return 0.28;return 0.2;}
+function levelSpeed(l){if(l>=12)return 1200;if(l>=7)return 1600;return 2200;}
+const US_LAT=39.5,US_LON=-98.35;
+
+// ── DEMO DATA ──
+const DEMO_SOURCES = [
+  {ip:'218.92.0.123',  country:'China',          region:'Jiangsu',        lat:32.1,  lon:118.8, level:15, count:847, rule:'Brute force SSH (847 attempts)'},
+  {ip:'185.220.101.47',country:'Germany',         region:'Frankfurt',      lat:50.1,  lon:8.7,   level:12, count:312, rule:'Tor exit node — port scan'},
+  {ip:'91.148.22.9',   country:'Russia',          region:'Moscow',         lat:55.7,  lon:37.6,  level:14, count:621, rule:'RDP brute force attack'},
+  {ip:'103.214.108.11',country:'India',           region:'Mumbai',         lat:19.1,  lon:72.9,  level:10, count:198, rule:'HTTP flood — web scanner'},
+  {ip:'45.142.212.100',country:'Netherlands',     region:'Amsterdam',      lat:52.4,  lon:4.9,   level:12, count:455, rule:'VPN exit — credential stuffing'},
+  {ip:'194.165.16.78', country:'Iran',            region:'Tehran',         lat:35.7,  lon:51.4,  level:13, count:289, rule:'SMTP relay attempt'},
+  {ip:'223.71.167.44', country:'China',           region:'Guangdong',      lat:23.1,  lon:113.3, level:11, count:734, rule:'SSH dictionary attack'},
+  {ip:'193.32.162.100',country:'Russia',          region:'St. Petersburg', lat:59.9,  lon:30.3,  level:13, count:502, rule:'Exploits — CVE-2024-1234'},
+  {ip:'5.188.206.14',  country:'Russia',          region:'Novosibirsk',    lat:55.0,  lon:82.9,  level:10, count:167, rule:'Port scan 0-1024'},
+  {ip:'180.101.88.197',country:'China',           region:'Zhejiang',       lat:30.3,  lon:120.2, level:15, count:1203,rule:'Botnet C2 traffic'},
+  {ip:'209.141.38.123',country:'United States',   region:'Nevada',         lat:36.2,  lon:-115.0,level:9,  count:88,  rule:'TOR relay — suspicious', us:true},
+  {ip:'104.244.72.115',country:'United States',   region:'Virginia',       lat:38.9,  lon:-77.0, level:8,  count:64,  rule:'VPN exit — brute force', us:true},
+  {ip:'51.89.153.112', country:'France',          region:'Île-de-France',  lat:48.9,  lon:2.3,   level:9,  count:142, rule:'Web application scan'},
+  {ip:'45.95.168.200', country:'Ukraine',         region:'Kyiv',           lat:50.5,  lon:30.5,  level:11, count:203, rule:'Credential stuffing — O365'},
+  {ip:'159.65.88.10',  country:'Singapore',       region:'Central',        lat:1.3,   lon:103.8, level:8,  count:95,  rule:'SSH honeypot hit'},
+  {ip:'202.29.153.1',  country:'Vietnam',         region:'Ho Chi Minh',    lat:10.8,  lon:106.7, level:7,  count:77,  rule:'HTTP brute force — wp-login'},
+  {ip:'77.247.181.163',country:'Netherlands',     region:'Amsterdam',      lat:52.3,  lon:4.8,   level:10, count:258, rule:'Tor exit — malware C2'},
+  {ip:'2.56.57.20',    country:'Ukraine',         region:'Kharkiv',        lat:49.9,  lon:36.2,  level:9,  count:134, rule:'SMB vulnerability probe'},
+  {ip:'87.120.37.224', country:'Bulgaria',        region:'Sofia',          lat:42.7,  lon:23.3,  level:8,  count:112, rule:'Port scan — stealth SYN'},
+  {ip:'116.62.183.22', country:'China',           region:'Shanghai',       lat:31.2,  lon:121.5, level:12, count:567, rule:'SQL injection probe'},
+  {ip:'107.189.31.140',country:'United States',   region:'Oregon',         lat:45.5,  lon:-122.7,level:7,  count:43,  rule:'TOR relay', us:true},
+  {ip:'46.101.159.52', country:'Germany',         region:'Berlin',         lat:52.5,  lon:13.4,  level:8,  count:89,  rule:'WordPress scanner'},
+  {ip:'149.28.56.10',  country:'United States',   region:'Texas',          lat:30.3,  lon:-97.7, level:10, count:156, rule:'Botnet node — outbound spam', us:true},
+];
+
+// country aggregation
+const COUNTRIES_AGG = (()=>{
+  const map={};
+  DEMO_SOURCES.forEach(s=>{
+    if(!map[s.country])map[s.country]={key:s.country,doc_count:0};
+    map[s.country].doc_count+=s.count;
+  });
+  return Object.values(map).sort((a,b)=>b.doc_count-a.doc_count);
+})();
+
+const FLAGS={'United States':'🇺🇸','China':'🇨🇳','Russia':'🇷🇺','Germany':'🇩🇪','Netherlands':'🇳🇱','India':'🇮🇳','France':'🇫🇷','Iran':'🇮🇷','Ukraine':'🇺🇦','Singapore':'🇸🇬','Vietnam':'🇻🇳','Bulgaria':'🇧🇬'};
+function getFlag(name){return FLAGS[name]||'🌐';}
+const CC={'United States':[39.5,-98.35],'China':[35,105],'Russia':[60,90],'Germany':[51,10],'Netherlands':[52.4,4.9],'India':[20,78],'France':[46,2],'Iran':[32,53],'Ukraine':[49,32],'Singapore':[1.4,103.8],'Vietnam':[16,108],'Bulgaria':[42.7,25.5]};
+
+let allPoints = [...DEMO_SOURCES];
+let usOnly = false;
+let cycleTimer=null,cycleProgressTimer=null,cycleIdx=0,cycleList=[];
+const CYCLE_MS=9000;
+
+function buildGlobeData(points){
+  const pts=usOnly?points.filter(p=>p.us):points;
+  const pointsData=pts.map(p=>({...p,color:levelColor(p.level),radius:Math.min(0.15+Math.log10(p.count+1)*0.18,0.8)}));
+  const topAttackers=[...pts].filter(p=>!p.us).sort((a,b)=>b.level-a.level||b.count-a.count).slice(0,30);
+  const arcsData=topAttackers.map(p=>({
+    srcLat:p.lat,srcLon:p.lon,
+    dstLat:US_LAT+(Math.random()-.5)*8,dstLon:US_LON+(Math.random()-.5)*20,
+    ip:p.ip,country:p.country,level:p.level,color:levelColor(p.level),rgb:levelRgb(p.level),
+    stroke:levelStroke(p.level),alt:levelAlt(p.level),speed:levelSpeed(p.level)
+  }));
+  const ringsData=pts.filter(p=>p.level>=7).map(p=>({lat:p.lat,lon:p.lon,rgb:levelRgb(p.level),maxR:3+p.level*0.3,speed:1.2+(p.level-7)*0.15,period:1200-p.level*30}));
+  ringsData.push({lat:US_LAT,lon:US_LON,rgb:'0,255,136',maxR:5,speed:1.5,period:800});
+  return{pointsData,arcsData,ringsData};
+}
+function applyGlobeData(points){const{pointsData,arcsData,ringsData}=buildGlobeData(points);globe.arcsData(arcsData).pointsData(pointsData).ringsData(ringsData);}
+
+function renderCountries(){
+  const max=COUNTRIES_AGG[0].doc_count;
+  let html='';
+  COUNTRIES_AGG.forEach(c=>{
+    const pct=Math.round((c.doc_count/max)*100);
+    const isUS=c.key==='United States';
+    html+=`<div class="c-item${isUS?' us':''}" onclick="zoomTo('${c.key}')">
+      <span class="c-flag">${getFlag(c.key)}</span>
+      <span class="c-name">${c.key}</span>
+      <div class="c-bar-wrap"><div class="c-bar" style="width:${pct}%"></div></div>
+      <span class="c-num">${c.doc_count.toLocaleString()}</span>
+    </div>`;
+  });
+  document.getElementById('country-list').innerHTML=html;
+}
+
+function renderFeed(newItem=null){
+  const sorted=[...allPoints].sort((a,b)=>(b.us-a.us)||(b.level-a.level)||(b.count-a.count));
+  let html='';
+  sorted.forEach(p=>{
+    const color=levelColor(p.level);
+    const isNew=newItem&&newItem.ip===p.ip;
+    html+=`<div class="f-item${p.us?' us':''}${isNew?' new':''}" onclick="flyToPoint(${p.lat},${p.lon},${p.level})">
+      <div class="f-row1">
+        <span><span class="ldot" style="background:${color}"></span><span class="f-ip">${p.ip}</span>${p.us?'<span class="us-badge">US</span>':''}</span>
+        <span class="f-time">${new Date().toLocaleTimeString('en-US',{hour12:false})}</span>
+      </div>
+      <div class="f-row2">${p.country}${p.region?' · '+p.region:''} · ${p.count.toLocaleString()} hits</div>
+      <div class="f-rule">${p.rule}</div>
+    </div>`;
+  });
+  document.getElementById('feed-list').innerHTML=html;
+}
+
+function zoomTo(name){const c=CC[name];if(c)globe.pointOfView({lat:c[0],lng:c[1],altitude:1.8},1200);else globe.pointOfView({lat:20,lng:0,altitude:2.5},1200);}
+function flyToPoint(lat,lon){globe.pointOfView({lat,lng:lon,altitude:1.2},1500);}
+function flyToUS(p){globe.pointOfView({lat:p.lat,lng:p.lon,altitude:1.0},1500);showToast(p);}
+
+function toggleUS(){
+  usOnly=!usOnly;
+  document.getElementById('btn-us').classList.toggle('active',usOnly);
+  applyGlobeData(allPoints);
+  if(usOnly){globe.pointOfView({lat:39.5,lng:-98.35,altitude:1.6},1200);startCycle(allPoints.filter(p=>p.us));}
+  else{stopCycle();globe.pointOfView({lat:30,lng:10,altitude:2.0},1200);}
+}
+
+function startCycle(pts){stopCycle();cycleList=pts;cycleIdx=0;runCycleStep();cycleTimer=setInterval(runCycleStep,CYCLE_MS);animateCycleBar();}
+function stopCycle(){if(cycleTimer){clearInterval(cycleTimer);cycleTimer=null;}if(cycleProgressTimer){clearInterval(cycleProgressTimer);cycleProgressTimer=null;}document.getElementById('cycle-fill').style.width='0%';}
+function runCycleStep(){if(!cycleList.length)return;const p=cycleList[cycleIdx%cycleList.length];cycleIdx++;globe.pointOfView({lat:p.lat,lng:p.lon,altitude:1.0},1800);showToast(p);animateCycleBar();}
+function animateCycleBar(){if(cycleProgressTimer)clearInterval(cycleProgressTimer);const fill=document.getElementById('cycle-fill');fill.style.transition='none';fill.style.width='0%';let elapsed=0;const tick=80;cycleProgressTimer=setInterval(()=>{elapsed+=tick;fill.style.transition=`width ${tick}ms linear`;fill.style.width=Math.min(100,(elapsed/CYCLE_MS)*100)+'%';if(elapsed>=CYCLE_MS)clearInterval(cycleProgressTimer);},tick);}
+
+let toastTimer=null;
+function showToast(p){
+  const old=document.getElementById('t-toast');if(old)old.remove();
+  if(toastTimer)clearTimeout(toastTimer);
+  const el=document.createElement('div');el.id='t-toast';el.className='toast';
+  el.innerHTML=`<div class="toast-hd">⚠ Attack Detected <span class="toast-x" onclick="this.closest('.toast').remove()">✕</span></div>
+    <div class="toast-ip">${p.ip}</div>
+    <div class="toast-sub">${p.region?' '+p.region+' · ':''}${p.country} · ${p.count.toLocaleString()} hits · Lvl ${p.level}</div>
+    <div class="toast-sub" style="color:var(--text-muted);margin-top:3px">${p.rule}</div>`;
+  document.body.appendChild(el);
+  toastTimer=setTimeout(()=>{if(document.getElementById('t-toast')===el)el.remove();},6000);
+}
+
+function setStat(id,val){document.getElementById(id).textContent=typeof val==='number'?val.toLocaleString():val;}
+
+// ── LIVE SIMULATION — add new attacks periodically ──
+const LIVE_ATTACKS=[
+  {ip:'36.110.228.15', country:'China',region:'Beijing',lat:39.9,lon:116.4,level:13,count:1,rule:'SSH brute force — new wave'},
+  {ip:'195.54.160.100',country:'Russia',region:'Kazan',lat:55.8,lon:49.1,level:11,count:1,rule:'Port 445 SMB probe'},
+  {ip:'103.79.78.100', country:'Hong Kong',region:'Central',lat:22.3,lon:114.2,level:10,count:1,rule:'HTTP scanner — CVE probe'},
+  {ip:'5.39.43.220',   country:'France',region:'Paris',lat:48.85,lon:2.35,level:9,count:1,rule:'Web vulnerability scan'},
+  {ip:'91.92.251.103', country:'Netherlands',region:'Rotterdam',lat:51.9,lon:4.5,level:12,count:1,rule:'Tor — credential stuffing'},
+];
+let liveIdx=0;
+setInterval(()=>{
+  const atk={...LIVE_ATTACKS[liveIdx%LIVE_ATTACKS.length]};
+  atk.count=Math.floor(Math.random()*50)+1;
+  liveIdx++;
+  // bump existing or add
+  const existing=allPoints.find(p=>p.ip===atk.ip);
+  if(existing){existing.count+=atk.count;}
+  else{allPoints.push(atk);}
+  applyGlobeData(allPoints);
+  renderFeed(atk);
+  showToast(atk);
+  // update stats
+  const total=allPoints.reduce((s,p)=>s+p.count,0);
+  setStat('st-total',total);
+  setStat('st-ips',allPoints.length);
+  setStat('st-us',allPoints.filter(p=>p.us).length);
+},8000);
+
+// ── INIT ──
+function init(){
+  const total=allPoints.reduce((s,p)=>s+p.count,0);
+  setStat('st-total',total);
+  setStat('st-ips',allPoints.length);
+  setStat('st-us',allPoints.filter(p=>p.us).length);
+  applyGlobeData(allPoints);
+  renderCountries();
+  renderFeed();
+}
+init();
+</script>
+</body>
+</html>

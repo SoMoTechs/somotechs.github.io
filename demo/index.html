@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SomoShield SOC — Live Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080c14;
+  --surface:#0e1420;
+  --surface-2:#141b29;
+  --surface-3:#1a2235;
+  --border:rgba(255,255,255,0.06);
+  --border-2:rgba(255,255,255,0.12);
+  --accent:#1D6FFF;
+  --green:#22c55e;--green-2:#4ade80;--green-dim:rgba(34,197,94,0.1);
+  --amber:#f59e0b;--amber-2:#fbbf24;--amber-dim:rgba(245,158,11,0.1);
+  --red:#ef4444;--red-2:#f87171;--red-dim:rgba(239,68,68,0.1);
+  --blue:#3b82f6;--blue-2:#60a5fa;--blue-dim:rgba(59,130,246,0.1);
+  --purple:#8b5cf6;
+  --text:#e8eaf0;--text-muted:#8892a4;--text-subtle:#475569;
+  --sidebar-w:200px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'Inter',system-ui,sans-serif;font-size:14px;line-height:1.5;
+  display:flex;flex-direction:column;
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:radial-gradient(circle,rgba(29,111,255,.05) 1px,transparent 1px);
+  background-size:32px 32px;pointer-events:none;z-index:0;
+}
+body::after{
+  content:'';position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 0% 0%,rgba(29,111,255,.07) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 40% at 100% 100%,rgba(59,130,246,.05) 0%,transparent 55%);
+  pointer-events:none;z-index:0;
+}
+
+/* ── DEMO BANNER ── */
+.demo-banner{
+  background:linear-gradient(90deg,rgba(139,92,246,.25),rgba(29,111,255,.2),rgba(139,92,246,.25));
+  border-bottom:1px solid rgba(139,92,246,.4);
+  padding:0 1.5rem;height:38px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:12px;font-weight:600;z-index:300;position:relative;
+  animation:banner-scan 6s ease-in-out infinite;
+}
+@keyframes banner-scan{
+  0%,100%{background:linear-gradient(90deg,rgba(139,92,246,.2),rgba(29,111,255,.2),rgba(139,92,246,.2));}
+  50%{background:linear-gradient(90deg,rgba(29,111,255,.2),rgba(139,92,246,.3),rgba(29,111,255,.2));}
+}
+.demo-banner-left{display:flex;align-items:center;gap:.6rem;color:#c4b5fd;}
+.demo-icon{font-size:14px;}
+.demo-banner-right{display:flex;align-items:center;gap:.75rem;}
+.demo-banner a{
+  color:#fff;text-decoration:none;background:linear-gradient(135deg,#8b5cf6,#1D6FFF);
+  padding:.28rem .85rem;border-radius:6px;font-size:11px;font-weight:700;
+  transition:opacity .2s;
+}
+.demo-banner a:hover{opacity:.85;}
+.demo-banner span{color:rgba(196,181,253,.7);font-size:11px;}
+
+/* ── LAYOUT ── */
+.app{display:flex;flex:1;min-height:0;position:relative;z-index:1;}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sidebar-w);
+  background:linear-gradient(180deg,#07090f 0%,#050810 100%);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  flex-shrink:0;
+}
+.sidebar-logo{padding:18px 18px 16px;border-bottom:1px solid var(--border);}
+.logo-mark{display:flex;align-items:center;gap:10px;}
+.logo-icon{
+  width:34px;height:34px;flex-shrink:0;
+  background:linear-gradient(135deg,#1D6FFF 0%,#8b5cf6 100%);
+  border-radius:9px;display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:800;color:white;
+  box-shadow:0 0 0 1px rgba(29,111,255,.4),0 0 20px rgba(29,111,255,.35);
+}
+.logo-text{font-size:14px;font-weight:700;color:var(--text);letter-spacing:-.3px;}
+.logo-sub{font-size:9px;color:var(--text-subtle);margin-top:1px;letter-spacing:.5px;text-transform:uppercase;}
+.sidebar-nav{flex:1;padding:12px 10px;overflow-y:auto;}
+.nav-section-label{font-size:9px;font-weight:700;color:var(--text-subtle);text-transform:uppercase;letter-spacing:1.2px;padding:10px 8px 4px;}
+.nav-link{
+  display:flex;align-items:center;gap:9px;padding:8px 10px;
+  border-radius:8px;color:var(--text-muted);text-decoration:none;
+  font-size:13px;font-weight:500;transition:all .15s;
+  margin-bottom:2px;border-left:2px solid transparent;cursor:pointer;
+}
+.nav-link:hover{background:rgba(255,255,255,.04);color:var(--text);border-left-color:rgba(255,255,255,.12);}
+.nav-link.active{
+  background:linear-gradient(90deg,rgba(29,111,255,.15) 0%,rgba(29,111,255,.05) 100%);
+  color:#93C5FD;border-left-color:#1D6FFF;font-weight:600;
+}
+.nav-divider{height:1px;background:var(--border);margin:8px 8px;}
+.sidebar-footer{padding:12px 16px;border-top:1px solid var(--border);}
+.live-badge{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--green);font-weight:600;}
+.live-dot{
+  width:8px;height:8px;background:var(--green);border-radius:50%;flex-shrink:0;
+  box-shadow:0 0 0 2px rgba(34,197,94,.25),0 0 12px rgba(34,197,94,.7);
+  animation:live-pulse 2s ease-in-out infinite;
+}
+@keyframes live-pulse{
+  0%,100%{box-shadow:0 0 0 2px rgba(34,197,94,.25),0 0 12px rgba(34,197,94,.6);}
+  50%{box-shadow:0 0 0 6px rgba(34,197,94,.06),0 0 24px rgba(34,197,94,.2);}
+}
+.footer-ts{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-subtle);margin-top:4px;}
+
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;}
+
+/* ── TOPBAR ── */
+.topbar{
+  background:rgba(6,9,16,.9);backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,255,255,.05);
+  padding:0 24px;height:52px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.topbar-left{}
+.topbar-title{font-size:13px;font-weight:600;color:var(--text);}
+.topbar-sub{font-size:10px;color:var(--text-subtle);text-transform:uppercase;letter-spacing:.6px;}
+.topbar-right{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-subtle);}
+
+/* ── POSTURE BANNER ── */
+.posture-banner{
+  background:linear-gradient(90deg,rgba(34,197,94,.1) 0%,rgba(29,111,255,.05) 50%,rgba(34,197,94,.04) 100%);
+  border-bottom:1px solid rgba(34,197,94,.18);
+  padding:0 20px;height:34px;flex-shrink:0;
+  display:flex;align-items:center;gap:0;position:relative;overflow:hidden;
+}
+.posture-banner::before{
+  content:'';position:absolute;top:0;left:-100%;width:35%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(34,197,94,.06),transparent);
+  animation:posture-scan 5s ease-in-out infinite;
+}
+@keyframes posture-scan{to{left:150%;}}
+.posture-status{display:flex;align-items:center;gap:8px;padding-right:20px;border-right:1px solid rgba(255,255,255,.08);}
+.posture-dot{width:8px;height:8px;background:var(--green);border-radius:50%;box-shadow:0 0 10px var(--green);animation:live-pulse 2s ease-in-out infinite;}
+.posture-label{font-size:11px;font-weight:700;color:var(--green);letter-spacing:.8px;text-transform:uppercase;}
+.posture-metrics{display:flex;gap:0;flex:1;padding-left:20px;}
+.posture-metric{padding:0 16px;border-right:1px solid rgba(255,255,255,.06);font-size:11px;color:var(--text-muted);}
+.posture-metric:last-child{border-right:none;}
+.posture-metric b{color:var(--text);font-weight:700;}
+.posture-badge{margin-left:auto;font-size:9px;font-weight:700;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.8px;background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.25);}
+
+/* ── THREAT FEED ── */
+.threat-feed{
+  padding:4px 24px;
+  background:rgba(5,8,16,.8);border-bottom:1px solid rgba(255,255,255,.06);
+  display:flex;align-items:center;gap:6px;
+  overflow-x:auto;flex-shrink:0;height:30px;
+}
+.threat-feed::-webkit-scrollbar{height:2px;}
+.threat-feed::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px;}
+.feed-header{display:flex;align-items:center;gap:6px;flex-shrink:0;padding-right:10px;border-right:1px solid rgba(255,255,255,.08);}
+.feed-pulse{width:6px;height:6px;border-radius:50%;background:#E53935;flex-shrink:0;animation:live-pulse 2s ease-in-out infinite;}
+.feed-title{font-size:9px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-subtle);}
+.feed-pill{
+  display:inline-flex;align-items:center;gap:5px;
+  border-radius:4px;padding:2px 8px 2px 5px;flex-shrink:0;white-space:nowrap;
+  font-size:10px;font-family:'JetBrains Mono',monospace;
+  border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.03);
+}
+.feed-pill.sev-critical{border-color:rgba(239,68,68,.25);background:rgba(239,68,68,.07);}
+.feed-pill.sev-high{border-color:rgba(245,158,11,.2);background:rgba(245,158,11,.05);}
+.feed-pill.sev-block{border-color:rgba(29,111,255,.2);background:rgba(29,111,255,.05);}
+.feed-pill.sev-ok{border-color:rgba(34,197,94,.15);background:rgba(34,197,94,.04);}
+.feed-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.feed-dot.red{background:#ef4444;box-shadow:0 0 4px rgba(239,68,68,.6);}
+.feed-dot.amber{background:#f59e0b;}
+.feed-dot.blue{background:#1D6FFF;}
+.feed-dot.green{background:#22c55e;}
+.feed-pill-txt{color:var(--text-muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;}
+.feed-pill-sev{font-size:8px;font-weight:700;letter-spacing:.5px;margin-right:1px;opacity:.8;}
+.feed-pill-sev.red{color:#f87171;}
+.feed-pill-sev.amber{color:#fbbf24;}
+.feed-pill-sev.blue{color:#60A5FA;}
+.feed-pill-sev.green{color:#4ade80;}
+
+/* ── PAGE BODY ── */
+.page-body{
+  padding:12px 20px 12px;
+  display:flex;flex-direction:column;gap:10px;
+  flex:1;min-height:0;overflow-y:auto;
+}
+.page{display:none;}
+.page.active{display:flex;flex-direction:column;gap:10px;flex:1;}
+.section-head{display:flex;align-items:center;gap:12px;margin:14px 0 8px;}
+.section-title{
+  font-size:10px;font-weight:700;color:var(--text-subtle);
+  text-transform:uppercase;letter-spacing:1px;white-space:nowrap;
+  display:flex;align-items:center;gap:8px;
+}
+.section-title::before{
+  content:'';display:block;width:3px;height:14px;
+  background:linear-gradient(180deg,var(--accent),transparent);border-radius:2px;
+}
+.section-line{flex:1;height:1px;background:var(--border);}
+
+/* ── STAT CARDS ── */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.stat-card{
+  background:var(--surface);
+  background-image:linear-gradient(160deg,rgba(255,255,255,.03) 0%,transparent 60%);
+  border:1px solid var(--border);border-radius:14px;padding:16px 18px 14px;
+  position:relative;overflow:hidden;
+  box-shadow:0 4px 32px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.05);
+  transition:border-color .2s,transform .2s;
+}
+.stat-card:hover{border-color:var(--border-2);transform:translateY(-1px);}
+.stat-card-green{border-top:2px solid var(--green);}
+.stat-card-green::before{content:'';position:absolute;top:0;left:0;right:0;height:70px;background:linear-gradient(180deg,rgba(34,197,94,.08),transparent);pointer-events:none;}
+.stat-card-amber{border-top:2px solid var(--amber);}
+.stat-card-amber::before{content:'';position:absolute;top:0;left:0;right:0;height:70px;background:linear-gradient(180deg,rgba(245,158,11,.08),transparent);pointer-events:none;}
+.stat-card-red{border-top:2px solid var(--red);}
+.stat-card-red::before{content:'';position:absolute;top:0;left:0;right:0;height:70px;background:linear-gradient(180deg,rgba(239,68,68,.08),transparent);pointer-events:none;}
+.stat-card-blue{border-top:2px solid var(--blue);}
+.stat-card-blue::before{content:'';position:absolute;top:0;left:0;right:0;height:70px;background:linear-gradient(180deg,rgba(59,130,246,.08),transparent);pointer-events:none;}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.card-label{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:600;color:var(--text-subtle);text-transform:uppercase;letter-spacing:.6px;}
+.card-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;}
+.card-icon.green{background:rgba(34,197,94,.12);}
+.card-icon.amber{background:rgba(245,158,11,.12);}
+.card-icon.red{background:rgba(239,68,68,.12);}
+.card-icon.blue{background:rgba(59,130,246,.12);}
+.badge-live{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.25);}
+.badge-live.red{background:rgba(239,68,68,.1);color:var(--red);border-color:rgba(239,68,68,.25);}
+.hero-num{font-size:40px;font-weight:800;line-height:1;letter-spacing:-2px;margin-bottom:4px;font-variant-numeric:tabular-nums;}
+.hero-num.green{background:linear-gradient(135deg,var(--green) 20%,var(--green-2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 20px rgba(34,197,94,.4));}
+.hero-num.amber{background:linear-gradient(135deg,var(--amber) 20%,var(--amber-2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 20px rgba(245,158,11,.35));}
+.hero-num.red{background:linear-gradient(135deg,var(--red) 20%,var(--red-2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 20px rgba(239,68,68,.35));}
+.hero-num.blue{background:linear-gradient(135deg,var(--blue) 20%,var(--blue-2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 20px rgba(59,130,246,.35));}
+.hero-label{font-size:11px;color:var(--text-subtle);text-transform:uppercase;letter-spacing:.6px;}
+.hero-sub{font-size:11px;color:var(--text-subtle);margin-top:5px;font-family:'JetBrains Mono',monospace;}
+.hero-sub b{color:var(--text-muted);}
+.sev-divider{height:1px;background:var(--border);margin:12px 0;}
+.sev-row{margin-bottom:9px;}
+.sev-row-head{display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;color:var(--text-muted);}
+.sev-count{font-weight:700;}
+.sev-bar-bg{height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;}
+.sev-bar-fill{height:100%;border-radius:2px;transition:width .6s ease;}
+
+/* ── TWO COLUMN LAYOUT ── */
+.two-col{display:grid;grid-template-columns:1.2fr 1fr;gap:10px;}
+
+/* ── PANEL ── */
+.panel{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;overflow:hidden;
+  box-shadow:0 4px 24px rgba(0,0,0,.3);
+}
+.panel-head{
+  padding:12px 16px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.panel-title{font-size:11px;font-weight:700;color:var(--text-subtle);text-transform:uppercase;letter-spacing:.8px;display:flex;align-items:center;gap:8px;}
+.panel-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;}
+.panel-badge.red{background:rgba(239,68,68,.15);color:var(--red-2);}
+.panel-badge.green{background:rgba(34,197,94,.12);color:var(--green-2);}
+.panel-badge.amber{background:rgba(245,158,11,.12);color:var(--amber-2);}
+
+/* ── ALERT ROWS ── */
+.alert-row{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:11px 16px;border-bottom:1px solid var(--border);
+  cursor:pointer;transition:background .15s;
+}
+.alert-row:hover{background:rgba(255,255,255,.02);}
+.alert-row:last-child{border-bottom:none;}
+.alert-sev{
+  flex-shrink:0;padding:2px 7px;border-radius:4px;
+  font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;margin-top:2px;
+}
+.sev-critical{background:rgba(239,68,68,.2);color:#fca5a5;}
+.sev-high{background:rgba(245,158,11,.2);color:#fcd34d;}
+.sev-medium{background:rgba(59,130,246,.2);color:#93c5fd;}
+.sev-low{background:rgba(71,85,105,.3);color:#94a3b8;}
+.alert-body{flex:1;min-width:0;}
+.alert-desc{font-size:12px;font-weight:500;color:var(--text);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.alert-meta{font-size:11px;color:var(--text-subtle);font-family:'JetBrains Mono',monospace;display:flex;gap:12px;}
+.alert-time{font-size:11px;color:var(--text-subtle);white-space:nowrap;font-family:'JetBrains Mono',monospace;}
+
+/* ── AGENT ROWS ── */
+.agent-row{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 16px;border-bottom:1px solid var(--border);
+  cursor:pointer;transition:background .15s;
+}
+.agent-row:hover{background:rgba(255,255,255,.02);}
+.agent-row:last-child{border-bottom:none;}
+.agent-status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.agent-status-dot.online{background:var(--green);box-shadow:0 0 6px var(--green);}
+.agent-status-dot.offline{background:var(--text-subtle);}
+.agent-status-dot.warn{background:var(--amber);box-shadow:0 0 6px var(--amber);}
+.agent-info{flex:1;min-width:0;}
+.agent-name{font-size:12px;font-weight:600;color:var(--text);}
+.agent-detail{font-size:11px;color:var(--text-subtle);font-family:'JetBrains Mono',monospace;}
+.agent-client{font-size:11px;color:var(--text-muted);white-space:nowrap;}
+.score-pill{font-size:11px;font-weight:700;padding:2px 9px;border-radius:5px;}
+.score-a{background:rgba(34,197,94,.15);color:var(--green-2);}
+.score-b{background:rgba(59,130,246,.15);color:var(--blue-2);}
+.score-c{background:rgba(245,158,11,.15);color:var(--amber-2);}
+.score-d{background:rgba(239,68,68,.15);color:var(--red-2);}
+
+/* ── CLIENT CARDS ── */
+.client-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.client-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:16px;transition:border-color .2s,transform .2s;cursor:pointer;
+}
+.client-card:hover{border-color:var(--border-2);transform:translateY(-2px);}
+.client-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.client-stat{font-size:11px;color:var(--text-subtle);margin-bottom:12px;}
+.client-metrics{display:flex;gap:16px;}
+.client-metric{text-align:center;}
+.client-metric-val{font-size:18px;font-weight:800;}
+.client-metric-label{font-size:9px;color:var(--text-subtle);text-transform:uppercase;letter-spacing:.5px;}
+
+/* ── ALERTS PAGE TABLE ── */
+.alerts-table{width:100%;}
+.alerts-table-head{
+  display:grid;grid-template-columns:80px 1fr 120px 80px 90px;
+  padding:8px 16px;border-bottom:1px solid var(--border);
+  font-size:10px;font-weight:700;color:var(--text-subtle);text-transform:uppercase;letter-spacing:.8px;
+}
+.alerts-table-row{
+  display:grid;grid-template-columns:80px 1fr 120px 80px 90px;
+  padding:10px 16px;border-bottom:1px solid var(--border);
+  cursor:pointer;transition:background .15s;align-items:center;
+}
+.alerts-table-row:hover{background:rgba(255,255,255,.02);}
+.alerts-table-row:last-child{border-bottom:none;}
+.at-cell{font-size:12px;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.at-cell.main{color:var(--text);font-weight:500;}
+
+/* ── AGENTS PAGE TABLE ── */
+.agents-full{display:flex;flex-direction:column;gap:4px;}
+.agent-full-row{
+  display:grid;grid-template-columns:8px 200px 100px 100px 1fr 60px;
+  align-items:center;gap:12px;
+  padding:10px 16px;border-bottom:1px solid var(--border);
+  cursor:pointer;transition:background .15s;
+}
+.agent-full-row:hover{background:rgba(255,255,255,.02);}
+.agent-full-row:last-child{border-bottom:none;}
+.agent-full-head{
+  display:grid;grid-template-columns:8px 200px 100px 100px 1fr 60px;
+  gap:12px;padding:8px 16px;border-bottom:1px solid var(--border);
+  font-size:10px;font-weight:700;color:var(--text-subtle);text-transform:uppercase;letter-spacing:.8px;
+}
+</style>
+</head>
+<body>
+
+<!-- DEMO BANNER -->
+<div class="demo-banner">
+  <div class="demo-banner-left">
+    <span class="demo-icon">🔴</span>
+    <span><strong>LIVE DEMO</strong> — This is a real SomoShield dashboard with anonymized demo data. All features are active.</span>
+  </div>
+  <div class="demo-banner-right">
+    <span>Want this for your business?</span>
+    <a href="https://examplesoc.somotechs.com/#contact">Get SomoShield →</a>
+  </div>
+</div>
+
+<div class="app">
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">
+      <div class="logo-icon">🛡️</div>
+      <div>
+        <div class="logo-text">SomoShield</div>
+        <div class="logo-sub">Security Ops</div>
+      </div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Operations</div>
+    <div class="nav-link active" onclick="showPage('overview',this)">📊 Overview</div>
+    <div class="nav-link" onclick="showPage('agents',this)">💻 Agents</div>
+    <div class="nav-link" onclick="showPage('alerts',this)">🚨 Alerts</div>
+    <div class="nav-link" onclick="showPage('clients',this)">🏢 Clients</div>
+    <div class="nav-divider"></div>
+    <div class="nav-section-label">Security</div>
+    <div class="nav-link" onclick="window.location='/demo/threatmap.html'">🗺️ Threat Map</div>
+    <div class="nav-link" onclick="window.location='/demo/blocked.html'">🚫 Blocked IPs</div>
+    <div class="nav-link" onclick="demoClick()">💾 Backups</div>
+    <div class="nav-divider"></div>
+    <div class="nav-section-label">Account</div>
+    <div class="nav-link" onclick="demoClick()">⚙️ Settings</div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="live-badge"><div class="live-dot"></div>System Nominal</div>
+    <div class="footer-ts" id="sidebar-ts">--:--:-- UTC</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title" id="page-title">Security Overview</div>
+      <div class="topbar-sub">SomoShield SOC — Demo Environment</div>
+    </div>
+    <div class="topbar-right" id="topbar-ts">Loading...</div>
+  </div>
+
+  <!-- POSTURE -->
+  <div class="posture-banner">
+    <div class="posture-status">
+      <div class="posture-dot"></div>
+      <div class="posture-label">Operational</div>
+    </div>
+    <div class="posture-metrics">
+      <div class="posture-metric"><b id="pb-online">1,500</b> online</div>
+      <div class="posture-metric"><b id="pb-crit" style="color:var(--red)">3</b> critical</div>
+      <div class="posture-metric"><b>14</b> clients</div>
+      <div class="posture-metric"><b style="color:var(--green)">98.7%</b> uptime</div>
+    </div>
+    <div class="posture-badge">All Systems Go</div>
+  </div>
+
+  <!-- THREAT FEED -->
+  <div class="threat-feed" id="threat-feed">
+    <div class="feed-header">
+      <div class="feed-pulse"></div>
+      <div class="feed-title">Live Feed</div>
+    </div>
+    <div class="feed-pill sev-critical"><div class="feed-dot red"></div><span class="feed-pill-sev red">CRIT</span><span class="feed-pill-txt">VirusTotal malware · WORKSTATION-03</span></div>
+    <div class="feed-pill sev-high"><div class="feed-dot amber"></div><span class="feed-pill-sev amber">HIGH</span><span class="feed-pill-txt">lsass process access · LAPTOP-ACCT</span></div>
+    <div class="feed-pill sev-high"><div class="feed-dot amber"></div><span class="feed-pill-sev amber">HIGH</span><span class="feed-pill-txt">Logon outside hours · SERVER-BOH</span></div>
+    <div class="feed-pill sev-high"><div class="feed-dot amber"></div><span class="feed-pill-sev amber">HIGH</span><span class="feed-pill-txt">SYSTEM privileges assigned · DC-CITYHALL-01</span></div>
+    <div class="feed-pill sev-block"><div class="feed-dot blue"></div><span class="feed-pill-sev blue">BLOCK</span><span class="feed-pill-txt">IP banned · 185.220.101.47</span></div>
+    <div class="feed-pill sev-ok"><div class="feed-dot green"></div><span class="feed-pill-sev green">OK</span><span class="feed-pill-txt">Backup complete · City Hall-SERVER-01</span></div>
+    <div class="feed-pill sev-medium"><div class="feed-dot blue"></div><span class="feed-pill-sev blue">MED</span><span class="feed-pill-txt">AppCompatDB launch · WORKSTATION-02</span></div>
+    <div class="feed-pill sev-high"><div class="feed-dot amber"></div><span class="feed-pill-sev amber">HIGH</span><span class="feed-pill-txt">Logon outside hours · OFFICE-PC-07</span></div>
+  </div>
+
+  <!-- PAGE BODY -->
+  <div class="page-body">
+
+    <!-- ══ OVERVIEW PAGE ══ -->
+    <div class="page active" id="page-overview">
+      <div class="section-head"><div class="section-title">Security Posture</div><div class="section-line"></div></div>
+      <div class="stat-grid">
+        <div class="stat-card stat-card-green">
+          <div class="card-head">
+            <div class="card-label"><span>Agents Online</span></div>
+            <div class="card-icon green">💻</div>
+          </div>
+          <div class="hero-num green" id="stat-online">1,500</div>
+          <div class="hero-label">across all clients</div>
+          <div class="hero-sub"><b>2</b> offline · last seen &lt;1h</div>
+          <div class="sev-divider"></div>
+          <div class="sev-row">
+            <div class="sev-row-head"><span>City Hall</span><span class="sev-count" style="color:var(--green)">21</span></div>
+            <div class="sev-bar-bg"><div class="sev-bar-fill" style="width:100%;background:var(--green)"></div></div>
+          </div>
+          <div class="sev-row">
+            <div class="sev-row-head"><span>Apex Distrib.</span><span class="sev-count" style="color:var(--blue)">18</span></div>
+            <div class="sev-bar-bg"><div class="sev-bar-fill" style="width:85%;background:var(--blue)"></div></div>
+          </div>
+          <div class="sev-row">
+            <div class="sev-row-head"><span>LC Properties</span><span class="sev-count" style="color:var(--amber)">2</span></div>
+            <div class="sev-bar-bg"><div class="sev-bar-fill" style="width:10%;background:var(--amber)"></div></div>
+          </div>
+        </div>
+
+        <div class="stat-card stat-card-red">
+          <div class="card-head">
+            <div class="card-label"><span>Active Alerts</span></div>
+            <div class="badge-live red">LIVE</div>
+          </div>
+          <div class="hero-num red" id="stat-alerts">14</div>
+          <div class="hero-label">last 24 hours</div>
+          <div class="hero-sub"><b id="stat-crit">3</b> critical · <b>6</b> high · <b>5</b> med</div>
+          <div class="sev-divider"></div>
+          <div class="sev-row">
+            <div class="sev-row-head"><span>Critical</span><span class="sev-count" style="color:var(--red)">3</span></div>
+            <div class="sev-bar-bg"><div class="sev-bar-fill" style="width:21%;background:var(--red)"></div></div>
+          </div>
+          <div class="sev-row">
+            <div class="sev-row-head"><span>High</span><span class="sev-count" style="color:var(--amber)">6</span></div>
+            <div class="sev-bar-bg"><div class="sev-bar-fill" style="width:43%;background:var(--amber)"></div></div>
+          </div>
+          <div class="sev-row">
+            <div class="sev-row-head"><span>Medium</span><span class="sev-count" style="color:var(--blue)">5</span></div>
+            <div class="sev-bar-bg"><div class="sev-bar-fill" style="width:36%;background:var(--blue)"></div></div>
+          </div>
+        </div>
+
+        <div class="stat-card stat-card-blue">
+          <div class="card-head">
+            <div class="card-label"><span>Blocked Threats</span></div>
+            <div class="card-icon blue">🚫</div>
+          </div>
+          <div class="hero-num blue" id="stat-blocked">247</div>
+          <div class="hero-label">IPs blocked today</div>
+          <div class="hero-sub">↑ <b>+31</b> vs yesterday</div>
+          <div class="sev-divider"></div>
+          <div class="sev-row">
+            <div class="sev-row-head"><span>Brute Force</span><span class="sev-count" style="color:var(--red)">142</span></div>
+            <div class="sev-bar-bg"><div class="sev-bar-fill" style="width:57%;background:var(--red)"></div></div>
+          </div>
+          <div class="sev-row">
+            <div class="sev-row-head"><span>Port Scan</span><span class="sev-count" style="color:var(--amber)">68</span></div>
+            <div class="sev-bar-bg"><div class="sev-bar-fill" style="width:27%;background:var(--amber)"></div></div>
+          </div>
+          <div class="sev-row">
+            <div class="sev-row-head"><span>Other</span><span class="sev-count" style="color:var(--blue)">37</span></div>
+            <div class="sev-bar-bg"><div class="sev-bar-fill" style="width:15%;background:var(--blue)"></div></div>
+          </div>
+        </div>
+
+        <div class="stat-card stat-card-amber">
+          <div class="card-head">
+            <div class="card-label"><span>Patch Health</span></div>
+            <div class="card-icon amber">🩹</div>
+          </div>
+          <div class="hero-num amber">86%</div>
+          <div class="hero-label">endpoints current</div>
+          <div class="hero-sub"><b>6</b> pending patches</div>
+          <div class="sev-divider"></div>
+          <div class="sev-row">
+            <div class="sev-row-head"><span>Up to date</span><span class="sev-count" style="color:var(--green)">37</span></div>
+            <div class="sev-bar-bg"><div class="sev-bar-fill" style="width:86%;background:var(--green)"></div></div>
+          </div>
+          <div class="sev-row">
+            <div class="sev-row-head"><span>1–30 days old</span><span class="sev-count" style="color:var(--amber)">4</span></div>
+            <div class="sev-bar-bg"><div class="sev-bar-fill" style="width:9%;background:var(--amber)"></div></div>
+          </div>
+          <div class="sev-row">
+            <div class="sev-row-head"><span>30+ days</span><span class="sev-count" style="color:var(--red)">2</span></div>
+            <div class="sev-bar-bg"><div class="sev-bar-fill" style="width:5%;background:var(--red)"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <!-- RECENT ALERTS -->
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">🚨 Recent Alerts</div>
+            <div class="panel-badge red" id="alert-count-badge">14 active</div>
+          </div>
+          <div id="alert-list">
+            <div class="alert-row"><div class="alert-sev sev-critical">CRIT</div><div class="alert-body"><div class="alert-desc">VirusTotal: Malware detected — C:\Windows\Temp\tmp9073.tmp (2/66 engines)</div><div class="alert-meta"><span>WORKSTATION-03</span><span>City Hall</span></div></div><div class="alert-time">3m ago</div></div>
+            <div class="alert-row"><div class="alert-sev sev-high">HIGH</div><div class="alert-body"><div class="alert-desc">Lsass process accessed by C:\ProgramData\Microsoft\Windows Defender\...</div><div class="alert-meta"><span>LAPTOP-ACCT</span><span>Apex Distrib.</span></div></div><div class="alert-time">18m ago</div></div>
+            <div class="alert-row"><div class="alert-sev sev-high">HIGH</div><div class="alert-body"><div class="alert-desc">Windows logon success outside business hours (11:47 PM)</div><div class="alert-meta"><span>SERVER-BOH</span><span>City Hall</span></div></div><div class="alert-time">41m ago</div></div>
+            <div class="alert-row"><div class="alert-sev sev-high">HIGH</div><div class="alert-body"><div class="alert-desc">Windows Logon: Special privileges assigned to new logon (SYSTEM)</div><div class="alert-meta"><span>DC-CITYHALL-01</span><span>City Hall</span></div></div><div class="alert-time">1h ago</div></div>
+            <div class="alert-row"><div class="alert-sev sev-medium">MED</div><div class="alert-body"><div class="alert-desc">Application Compatibility Database launched — possible UAC bypass</div><div class="alert-meta"><span>WORKSTATION-02</span><span>LC Properties</span></div></div><div class="alert-time">2h ago</div></div>
+            <div class="alert-row"><div class="alert-sev sev-medium">MED</div><div class="alert-body"><div class="alert-desc">Windows logon success outside business hours (12:03 AM)</div><div class="alert-meta"><span>OFFICE-PC-07</span><span>City Hall</span></div></div><div class="alert-time">3h ago</div></div>
+          </div>
+        </div>
+
+        <!-- AGENT HEALTH -->
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">💻 Agent Health</div>
+            <div class="panel-badge green">1,500 online</div>
+          </div>
+          <div class="agent-row"><div class="agent-status-dot online"></div><div class="agent-info"><div class="agent-name">DC-City Hall-01</div><div class="agent-detail">Server 2022 · City Hall</div></div><div class="score-pill score-a">A+</div></div>
+          <div class="agent-row"><div class="agent-status-dot online"></div><div class="agent-info"><div class="agent-name">DESKTOP-City Hall042</div><div class="agent-detail">Win 11 · City Hall</div></div><div class="score-pill score-b">B</div></div>
+          <div class="agent-row"><div class="agent-status-dot warn"></div><div class="agent-info"><div class="agent-name">WS-LC Properties-02</div><div class="agent-detail">Win 10 · LC Properties</div></div><div class="score-pill score-c">C</div></div>
+          <div class="agent-row"><div class="agent-status-dot online"></div><div class="agent-info"><div class="agent-name">SERVER-MAIN</div><div class="agent-detail">Server 2019 · Apex Distrib.</div></div><div class="score-pill score-a">A</div></div>
+          <div class="agent-row"><div class="agent-status-dot online"></div><div class="agent-info"><div class="agent-name">OFFICE-PC-07</div><div class="agent-detail">Win 11 · City Hall</div></div><div class="score-pill score-b">B+</div></div>
+          <div class="agent-row"><div class="agent-status-dot offline"></div><div class="agent-info"><div class="agent-name">City Hall-KIOSK-01</div><div class="agent-detail">Win 10 · City Hall · offline 42m</div></div><div class="score-pill score-d">D</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ AGENTS PAGE ══ -->
+    <div class="page" id="page-agents">
+      <div class="section-head"><div class="section-title">All Endpoints</div><div class="section-line"></div></div>
+      <div class="panel">
+        <div class="agent-full-head">
+          <span></span><span>Hostname</span><span>Client</span><span>OS</span><span>Last Seen</span><span>Score</span>
+        </div>
+        <div class="agent-full-row"><div class="agent-status-dot online"></div><span style="font-size:12px;font-weight:600">DC-City Hall-01</span><span style="font-size:11px;color:var(--text-muted)">City Hall</span><span style="font-size:11px;color:var(--text-subtle);font-family:'JetBrains Mono',monospace">Server 2022</span><span style="font-size:11px;color:var(--green);font-family:'JetBrains Mono',monospace">Active now</span><div class="score-pill score-a">A+</div></div>
+        <div class="agent-full-row"><div class="agent-status-dot online"></div><span style="font-size:12px;font-weight:600">City Hall-SERVER-02</span><span style="font-size:11px;color:var(--text-muted)">City Hall</span><span style="font-size:11px;color:var(--text-subtle);font-family:'JetBrains Mono',monospace">Server 2022</span><span style="font-size:11px;color:var(--green);font-family:'JetBrains Mono',monospace">Active now</span><div class="score-pill score-a">A</div></div>
+        <div class="agent-full-row"><div class="agent-status-dot online"></div><span style="font-size:12px;font-weight:600">DESKTOP-City Hall042</span><span style="font-size:11px;color:var(--text-muted)">City Hall</span><span style="font-size:11px;color:var(--text-subtle);font-family:'JetBrains Mono',monospace">Win 11 Pro</span><span style="font-size:11px;color:var(--green);font-family:'JetBrains Mono',monospace">Active now</span><div class="score-pill score-b">B</div></div>
+        <div class="agent-full-row"><div class="agent-status-dot online"></div><span style="font-size:12px;font-weight:600">OFFICE-PC-07</span><span style="font-size:11px;color:var(--text-muted)">City Hall</span><span style="font-size:11px;color:var(--text-subtle);font-family:'JetBrains Mono',monospace">Win 11 Pro</span><span style="font-size:11px;color:var(--amber);font-family:'JetBrains Mono',monospace">2m ago</span><div class="score-pill score-b">B+</div></div>
+        <div class="agent-full-row"><div class="agent-status-dot online"></div><span style="font-size:12px;font-weight:600">City Hall-ACCT-01</span><span style="font-size:11px;color:var(--text-muted)">City Hall</span><span style="font-size:11px;color:var(--text-subtle);font-family:'JetBrains Mono',monospace">Win 10 Pro</span><span style="font-size:11px;color:var(--green);font-family:'JetBrains Mono',monospace">Active now</span><div class="score-pill score-a">A</div></div>
+        <div class="agent-full-row"><div class="agent-status-dot offline"></div><span style="font-size:12px;font-weight:600">City Hall-KIOSK-01</span><span style="font-size:11px;color:var(--text-muted)">City Hall</span><span style="font-size:11px;color:var(--text-subtle);font-family:'JetBrains Mono',monospace">Win 10</span><span style="font-size:11px;color:var(--red);font-family:'JetBrains Mono',monospace">42m ago</span><div class="score-pill score-d">D</div></div>
+        <div class="agent-full-row"><div class="agent-status-dot online"></div><span style="font-size:12px;font-weight:600">SERVER-MAIN</span><span style="font-size:11px;color:var(--text-muted)">Apex Distrib.</span><span style="font-size:11px;color:var(--text-subtle);font-family:'JetBrains Mono',monospace">Server 2019</span><span style="font-size:11px;color:var(--green);font-family:'JetBrains Mono',monospace">Active now</span><div class="score-pill score-a">A</div></div>
+        <div class="agent-full-row"><div class="agent-status-dot online"></div><span style="font-size:12px;font-weight:600">DEV-WORKSTATION</span><span style="font-size:11px;color:var(--text-muted)">Apex Distrib.</span><span style="font-size:11px;color:var(--text-subtle);font-family:'JetBrains Mono',monospace">Win 11 Pro</span><span style="font-size:11px;color:var(--green);font-family:'JetBrains Mono',monospace">Active now</span><div class="score-pill score-a">A+</div></div>
+        <div class="agent-full-row"><div class="agent-status-dot warn"></div><span style="font-size:12px;font-weight:600">WS-LC Properties-02</span><span style="font-size:11px;color:var(--text-muted)">LC Properties</span><span style="font-size:11px;color:var(--text-subtle);font-family:'JetBrains Mono',monospace">Win 10</span><span style="font-size:11px;color:var(--amber);font-family:'JetBrains Mono',monospace">5m ago</span><div class="score-pill score-c">C</div></div>
+        <div class="agent-full-row"><div class="agent-status-dot online"></div><span style="font-size:12px;font-weight:600">LC Properties-SERVER</span><span style="font-size:11px;color:var(--text-muted)">LC Properties</span><span style="font-size:11px;color:var(--text-subtle);font-family:'JetBrains Mono',monospace">Server 2016</span><span style="font-size:11px;color:var(--green);font-family:'JetBrains Mono',monospace">Active now</span><div class="score-pill score-b">B+</div></div>
+      </div>
+    </div>
+
+    <!-- ══ ALERTS PAGE ══ -->
+    <div class="page" id="page-alerts">
+      <div class="section-head"><div class="section-title">All Alerts — Last 24h</div><div class="section-line"></div></div>
+      <div class="panel">
+        <div class="alerts-table-head">
+          <span>Severity</span><span>Description</span><span>Host</span><span>Client</span><span>Time</span>
+        </div>
+        <div class="alerts-table-row"><div class="alert-sev sev-critical">CRIT</div><div class="at-cell main">VirusTotal: Malware detected — C:\Windows\Temp\tmp9073.tmp (MD5: 746f61b7…)</div><span class="at-cell">WORKSTATION-03</span><span class="at-cell">City Hall</span><span class="at-cell" style="font-family:'JetBrains Mono',monospace">3m ago</span></div>
+        <div class="alerts-table-row"><div class="alert-sev sev-critical">CRIT</div><div class="at-cell main">VirusTotal: Malware in C:\Users\jsmith\Downloads\setup_update.exe</div><span class="at-cell">LAPTOP-ACCT</span><span class="at-cell">Apex Distrib.</span><span class="at-cell" style="font-family:'JetBrains Mono',monospace">2h ago</span></div>
+        <div class="alerts-table-row"><div class="alert-sev sev-critical">CRIT</div><div class="at-cell main">VirusTotal: Suspicious file hash match — C:\Temp\install_patch.exe</div><span class="at-cell">WORKSTATION-06</span><span class="at-cell">LC Properties</span><span class="at-cell" style="font-family:'JetBrains Mono',monospace">5h ago</span></div>
+        <div class="alerts-table-row"><div class="alert-sev sev-high">HIGH</div><div class="at-cell main">Lsass process accessed by C:\ProgramData\Microsoft\Windows Defender\Platform\...</div><span class="at-cell">LAPTOP-ACCT</span><span class="at-cell">Apex Distrib.</span><span class="at-cell" style="font-family:'JetBrains Mono',monospace">18m ago</span></div>
+        <div class="alerts-table-row"><div class="alert-sev sev-high">HIGH</div><div class="at-cell main">Lsass process accessed by C:\Windows\System32\svchost.exe (unusual caller)</div><span class="at-cell">SERVER-BOH</span><span class="at-cell">City Hall</span><span class="at-cell" style="font-family:'JetBrains Mono',monospace">3h ago</span></div>
+        <div class="alerts-table-row"><div class="alert-sev sev-high">HIGH</div><div class="at-cell main">Windows logon success outside business hours — user: jdoe (11:47 PM)</div><span class="at-cell">SERVER-BOH</span><span class="at-cell">City Hall</span><span class="at-cell" style="font-family:'JetBrains Mono',monospace">41m ago</span></div>
+        <div class="alerts-table-row"><div class="alert-sev sev-high">HIGH</div><div class="at-cell main">Windows logon success outside business hours — user: mlopez (2:14 AM)</div><span class="at-cell">WORKSTATION-04</span><span class="at-cell">Apex Distrib.</span><span class="at-cell" style="font-family:'JetBrains Mono',monospace">7h ago</span></div>
+        <div class="alerts-table-row"><div class="alert-sev sev-high">HIGH</div><div class="at-cell main">Windows Logon: Special privileges assigned to new logon (SYSTEM) — Event 4672</div><span class="at-cell">DC-CITYHALL-01</span><span class="at-cell">City Hall</span><span class="at-cell" style="font-family:'JetBrains Mono',monospace">1h ago</span></div>
+        <div class="alerts-table-row"><div class="alert-sev sev-high">HIGH</div><div class="at-cell main">Windows Logon: Special privileges assigned to new logon (SYSTEM) — Event 4672</div><span class="at-cell">SERVER-BOH</span><span class="at-cell">City Hall</span><span class="at-cell" style="font-family:'JetBrains Mono',monospace">4h ago</span></div>
+        <div class="alerts-table-row"><div class="alert-sev sev-medium">MED</div><div class="at-cell main">Application Compatibility Database launched — possible UAC bypass vector</div><span class="at-cell">WORKSTATION-02</span><span class="at-cell">LC Properties</span><span class="at-cell" style="font-family:'JetBrains Mono',monospace">2h ago</span></div>
+        <div class="alerts-table-row"><div class="alert-sev sev-medium">MED</div><div class="at-cell main">Application Compatibility Database (AppCompatDB) process execution detected</div><span class="at-cell">WORKSTATION-05</span><span class="at-cell">City Hall</span><span class="at-cell" style="font-family:'JetBrains Mono',monospace">6h ago</span></div>
+        <div class="alerts-table-row"><div class="alert-sev sev-medium">MED</div><div class="at-cell main">Windows logon success outside business hours — user: kbrown (12:03 AM)</div><span class="at-cell">OFFICE-PC-07</span><span class="at-cell">City Hall</span><span class="at-cell" style="font-family:'JetBrains Mono',monospace">3h ago</span></div>
+        <div class="alerts-table-row"><div class="alert-sev sev-medium">MED</div><div class="at-cell main">Windows logon success outside business hours — user: tgarcia (11:22 PM)</div><span class="at-cell">ACCT-WORKSTATION</span><span class="at-cell">Apex Distrib.</span><span class="at-cell" style="font-family:'JetBrains Mono',monospace">8h ago</span></div>
+        <div class="alerts-table-row"><div class="alert-sev sev-medium">MED</div><div class="at-cell main">Multiple failed Windows logon attempts — 8 failures (Event 4625)</div><span class="at-cell">DC-CITYHALL-01</span><span class="at-cell">City Hall</span><span class="at-cell" style="font-family:'JetBrains Mono',monospace">9h ago</span></div>
+      </div>
+    </div>
+
+    <!-- ══ CLIENTS PAGE ══ -->
+    <div class="page" id="page-clients">
+      <div class="section-head"><div class="section-title">Client Overview</div><div class="section-line"></div></div>
+      <div class="client-grid">
+        <div class="client-card">
+          <div class="client-name">City Hall</div>
+          <div class="client-stat">General Client · 21 endpoints · Active</div>
+          <div class="client-metrics">
+            <div class="client-metric"><div class="client-metric-val" style="color:var(--green)">21</div><div class="client-metric-label">Online</div></div>
+            <div class="client-metric"><div class="client-metric-val" style="color:var(--red)">2</div><div class="client-metric-label">Critical</div></div>
+            <div class="client-metric"><div class="client-metric-val" style="color:var(--amber)">78%</div><div class="client-metric-label">Patched</div></div>
+          </div>
+        </div>
+        <div class="client-card">
+          <div class="client-name">Apex Distrib.</div>
+          <div class="client-stat">Internal · 18 endpoints · Active</div>
+          <div class="client-metrics">
+            <div class="client-metric"><div class="client-metric-val" style="color:var(--green)">18</div><div class="client-metric-label">Online</div></div>
+            <div class="client-metric"><div class="client-metric-val" style="color:var(--red)">1</div><div class="client-metric-label">Critical</div></div>
+            <div class="client-metric"><div class="client-metric-val" style="color:var(--green)">96%</div><div class="client-metric-label">Patched</div></div>
+          </div>
+        </div>
+        <div class="client-card">
+          <div class="client-name">LC Properties</div>
+          <div class="client-stat">Small Office · 2 endpoints · Active</div>
+          <div class="client-metrics">
+            <div class="client-metric"><div class="client-metric-val" style="color:var(--amber)">1</div><div class="client-metric-label">Online</div></div>
+            <div class="client-metric"><div class="client-metric-val" style="color:var(--red)">1</div><div class="client-metric-label">Critical</div></div>
+            <div class="client-metric"><div class="client-metric-val" style="color:var(--amber)">50%</div><div class="client-metric-label">Patched</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /page-body -->
+</div><!-- /main -->
+</div><!-- /app -->
+
+<script>
+// ── CLOCK ──
+function updateClock(){
+  const now = new Date();
+  const ts = now.toUTCString().replace('GMT','UTC');
+  const short = now.toTimeString().slice(0,8)+' UTC';
+  document.getElementById('topbar-ts').textContent = ts;
+  document.getElementById('sidebar-ts').textContent = short;
+}
+setInterval(updateClock,1000);
+updateClock();
+
+// ── PAGE NAV ──
+const pageTitles = {
+  overview:'Security Overview',
+  agents:'Endpoints & Agents',
+  alerts:'Alert Management',
+  clients:'Client Overview'
+};
+function showPage(name, el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  el.classList.add('active');
+  document.getElementById('page-title').textContent = pageTitles[name]||name;
+}
+function demoClick(){
+  const msg = document.createElement('div');
+  msg.style.cssText='position:fixed;bottom:24px;right:24px;background:linear-gradient(135deg,#1D6FFF,#8b5cf6);color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;z-index:999;box-shadow:0 8px 24px rgba(0,0,0,.4);';
+  msg.innerHTML='🔒 Full access in your live environment — <a href="https://examplesoc.somotechs.com/#contact" style="color:#fff;text-decoration:underline">Get SomoShield</a>';
+  document.body.appendChild(msg);
+  setTimeout(()=>msg.remove(),4000);
+}
+
+// ── LIVE FEED ROTATION ──
+const feedItems = [
+  {cls:'sev-critical',dot:'red',sev:'CRIT',txt:'VirusTotal malware · WORKSTATION-03'},
+  {cls:'sev-high',dot:'amber',sev:'HIGH',txt:'lsass process access · LAPTOP-ACCT'},
+  {cls:'sev-high',dot:'amber',sev:'HIGH',txt:'Logon outside hours · SERVER-BOH'},
+  {cls:'sev-high',dot:'amber',sev:'HIGH',txt:'SYSTEM privileges assigned · DC-CITYHALL-01'},
+  {cls:'sev-block',dot:'blue',sev:'BLOCK',txt:'IP banned · 185.220.101.47'},
+  {cls:'sev-ok',dot:'green',sev:'OK',txt:'Backup complete · City Hall-SERVER-01'},
+  {cls:'sev-medium',dot:'blue',sev:'MED',txt:'AppCompatDB launch · WORKSTATION-02'},
+  {cls:'sev-high',dot:'amber',sev:'HIGH',txt:'Logon outside hours · OFFICE-PC-07'},
+  {cls:'sev-critical',dot:'red',sev:'CRIT',txt:'VirusTotal malware · LAPTOP-ACCT'},
+  {cls:'sev-high',dot:'amber',sev:'HIGH',txt:'lsass access · SERVER-BOH'},
+  {cls:'sev-block',dot:'blue',sev:'BLOCK',txt:'Brute force IP banned · 91.148.22.9'},
+  {cls:'sev-high',dot:'amber',sev:'HIGH',txt:'SYSTEM privilege escalation · WORKSTATION-04'},
+  {cls:'sev-medium',dot:'blue',sev:'MED',txt:'AppCompatDB launch · WORKSTATION-05'},
+  {cls:'sev-ok',dot:'green',sev:'OK',txt:'Patch deployed · City Hall-SERVER-02'},
+];
+let feedIdx = 0;
+setInterval(()=>{
+  const feed = document.getElementById('threat-feed');
+  const item = feedItems[feedIdx % feedItems.length];
+  feedIdx++;
+  const sevColor = {red:'red',amber:'amber',blue:'blue',green:'green'}[item.dot];
+  const pill = document.createElement('div');
+  pill.className = `feed-pill ${item.cls}`;
+  pill.innerHTML = `<div class="feed-dot ${item.dot}"></div><span class="feed-pill-sev ${sevColor}">${item.sev}</span><span class="feed-pill-txt">${item.txt}</span>`;
+  pill.style.opacity='0';pill.style.transition='opacity .4s';
+  feed.appendChild(pill);
+  setTimeout(()=>pill.style.opacity='1',50);
+  // remove oldest non-header pill if too many
+  const pills = feed.querySelectorAll('.feed-pill');
+  if(pills.length > 12) pills[0].remove();
+}, 6000);
+
+// ── COUNTERS JITTER (feels live) ──
+setInterval(()=>{
+  const blocked = parseInt(document.getElementById('stat-blocked').textContent);
+  document.getElementById('stat-blocked').textContent = blocked + Math.floor(Math.random()*3);
+}, 15000);
+</script>
+</body>
+</html>
